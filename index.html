@@ -3,71 +3,115 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>keano is een kneus — Sierlijk</title>
-  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+  <title>Keano is een kneus — Hero</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
   <style>
-    :root{--bg:#000;--fg:#fff}
-    html,body{height:100%;margin:0}
+    :root{
+      --bg:#0b0b0b; /* deep black */
+      --card:#0f0f0f;
+      --accent:#ffffff; /* white */
+      --muted:rgba(255,255,255,0.12);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
     body{
-      background:var(--bg);
-      color:var(--fg);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-family: 'Great Vibes', cursive;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-      padding:4vh 4vw;
-    }
-
-    .wrap{
-      text-align:center;
-      max-width:1200px;
-      width:100%;
-    }
-
-    .line{
-      font-size: clamp(40px, 12vw, 160px);
-      line-height:0.9;
       margin:0;
-      letter-spacing: -0.02em;
-      display:inline-block;
-      padding: 8px 14px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.02));
+      font-family: 'Montserrat', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background: radial-gradient(1200px 600px at 10% 20%, rgba(255,255,255,0.02), transparent),
+                  linear-gradient(180deg,#050505 0%, #0b0b0b 100%);
+      color:var(--accent);
+      display:grid;
+      place-items:center;
+      padding:32px;
     }
 
-    .line-outline{
+    .card{
+      width:min(1100px, 94vw);
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border:1px solid var(--muted);
+      padding:48px 56px;
+      border-radius:24px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+      backdrop-filter: blur(6px) saturate(90%);
+      text-align:center;
       position:relative;
-      color:var(--fg);
-      text-shadow:
-        0 1px 0 rgba(255,255,255,0.02),
-        0 6px 18px rgba(0,0,0,0.75);
+      overflow:hidden;
     }
 
-    .line::after{
+    /* decorative corner circles */
+    .card::before, .card::after{
       content:'';
-      display:block;
-      height:2px;
-      width:60%;
-      margin:18px auto 0;
-      background:var(--fg);
-      opacity:0.9;
-      border-radius:2px;
+      position:absolute;
+      width:360px;height:360px;border-radius:50%;
+      background:radial-gradient(circle at 30% 30%, rgba(255,255,255,0.03), transparent 40%);
+      pointer-events:none;opacity:0.9;
+    }
+    .card::before{right:-120px;top:-100px;transform:rotate(10deg)}
+    .card::after{left:-140px;bottom:-120px;transform:rotate(-8deg)}
+
+    h1{
+      margin:0 0 12px 0;
+      font-family: 'Playfair Display', serif;
+      font-weight:900;
+      letter-spacing: -0.02em;
+      font-size: clamp(48px, 7.5vw, 130px);
+      line-height:0.85;
+      color:var(--accent);
+      text-shadow: 0 6px 18px rgba(0,0,0,0.7), 0 1px 0 rgba(255,255,255,0.02);
+      transform: translateY(0);
+      transition: transform .6s cubic-bezier(.2,.9,.3,1);
     }
 
-    .sr-only{
-      position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap;border:0;padding:0;margin:-1px
+    .sub{
+      font-size: clamp(14px, 1.6vw, 20px);
+      color:rgba(255,255,255,0.65);
+      margin-top:6px;
+      font-weight:300;
     }
 
+    /* fancy underline */
+    .underline{
+      display:inline-block;
+      position:relative;
+      padding:8px 18px;
+      border-radius:999px;
+      background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      margin-top:18px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.6);
+    }
+    .underline::after{
+      content:'';position:absolute;left:8px;right:8px;bottom:6px;height:6px;border-radius:999px;
+      background:linear-gradient(90deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
+      transform:translateY(6px) scaleX(0.98);
+    }
+
+    /* small decorative line under */
+    .line{
+      width:84px;height:4px;margin:26px auto 0;border-radius:999px;background:var(--muted);
+    }
+
+    /* subtle hover effect for interaction */
+    .card:hover h1{ transform: translateY(-6px) }
+
+    /* accessibility: prefers-reduced-motion */
+    @media (prefers-reduced-motion:reduce){
+      .card, h1{transition:none}
+    }
+
+    /* responsive tweaks */
     @media (max-width:520px){
-      .line{padding:6px 8px}
+      .card{padding:28px}
+      .underline{padding:6px 12px}
     }
   </style>
 </head>
 <body>
-  <main class="wrap" role="main" aria-labelledby="keano">
-    <h1 id="keano" class="line line-outline">keano is een kneus</h1>
-    <p class="sr-only">Tekst is opgemaakt in sierlijke letters — zwart-wit thema.</p>
+  <main class="card" role="main" aria-label="Hero banner met tekst">
+    <h1 aria-hidden="false">Keano is een kneus</h1>
+    <div class="sub">Sober. Strak. Onverbiddelijk.</div>
+    <div class="underline" aria-hidden="true"></div>
+    <div class="line" aria-hidden="true"></div>
   </main>
 </body>
 </html>
