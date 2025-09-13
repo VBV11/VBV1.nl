@@ -1,170 +1,231 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="nl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gratis WiFi Toegang</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden; /* Prevent scrolling */
-        }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Keano — Styling Demo</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg1: #0f172a; /* donkerblauw */
+      --bg2: #071032; /* dieper */
+      --accent1: #ff7ab6; /* roze */
+      --accent2: #7be2ff; /* cyaan */
+      --glass: rgba(255,255,255,0.06);
+      --glass-2: rgba(255,255,255,0.04);
+      --card-radius: 18px;
+      color-scheme: dark;
+    }
 
-        .container {
-            background-color: #ffffff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            padding: 20px;
-            max-width: 400px;
-            width: 100%;
-            text-align: center;
-            box-sizing: border-box;
-            margin: 10px;
-        }
+    /* Global reset + nice defaults */
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(123,226,255,0.06), transparent 12%),
+                  radial-gradient(1000px 500px at 90% 90%, rgba(255,122,182,0.06), transparent 8%),
+                  linear-gradient(180deg,var(--bg1),var(--bg2));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:48px;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
 
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 1.5em;
-        }
+    /* Center card */
+    .card{
+      width:min(880px,96%);
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:var(--card-radius);
+      padding:48px;
+      box-shadow: 0 8px 40px rgba(2,6,23,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.04);
+      position:relative;
+      overflow:hidden;
+    }
 
-        p {
-            color: #666;
-            margin-bottom: 20px;
-            font-size: 1em;
-        }
+    /* Subtle floating gradient shapes */
+    .card::before, .card::after{
+      content: "";
+      position:absolute;
+      filter: blur(40px) saturate(120%);
+      transform: translateZ(0);
+      opacity:0.9;
+      pointer-events:none;
+    }
+    .card::before{
+      width:420px;height:420px;
+      right:-120px;top:-140px;
+      background: radial-gradient(circle at 30% 20%, var(--accent2), transparent 30%), radial-gradient(circle at 80% 80%, var(--accent1), transparent 20%);
+      mix-blend-mode: screen;
+      animation: slow-rotate 18s linear infinite;
+    }
+    .card::after{
+      width:240px;height:240px;
+      left:-80px;bottom:-80px;
+      background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02), transparent 40%);
+      animation: float-y 8s ease-in-out infinite alternate;
+    }
 
-        input[type="email"], input[type="password"] {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-size: 1em;
-        }
+    @keyframes slow-rotate{to{transform: rotate(360deg)}}
+    @keyframes float-y{to{transform: translateY(-12px)}}
 
-        button {
-            background-color: #007BFF;
-            color: #fff;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 100%;
-            font-size: 1em;
-            transition: background-color 0.3s ease;
-        }
+    .heading{
+      display:flex;
+      align-items:center;
+      gap:20px;
+    }
+    .logo{
+      width:72px;height:72px;border-radius:14px;
+      display:grid;place-items:center;
+      background: linear-gradient(135deg,var(--accent1),var(--accent2));
+      box-shadow: 0 6px 30px rgba(123,226,255,0.06);
+      font-family:'Playfair Display', serif;
+      font-size:28px;color:white;font-weight:700;
+    }
 
-        button:hover {
-            background-color: #0056b3;
-        }
+    h1{
+      margin:0;
+      font-family: 'Playfair Display', serif;
+      font-weight:700;
+      font-size: clamp(28px, 4.2vw, 44px);
+      color: #fff;
+      line-height:1.02;
+      letter-spacing:-0.02em;
+      text-shadow: 0 2px 18px rgba(0,0,0,0.6);
+    }
 
-        footer {
-            margin-top: 20px;
-            color: #999;
-            font-size: 0.9em;
-        }
+    .subtitle{
+      margin-top:8px;color:rgba(255,255,255,0.68);
+      font-size:14px;font-weight:400;
+    }
 
-        .language-select {
-            margin-bottom: 20px;
-        }
+    /* The insult line -- styled and animated */
+    .insult-wrap{
+      margin-top:28px;
+      display:flex;flex-direction:column;gap:18px;
+      align-items:flex-start;
+    }
 
-        select {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 1em;
-            box-sizing: border-box;
-        }
-    </style>
-    <script>
-        function changeLanguage() {
-            var language = document.getElementById("language").value;
-            var elements = document.querySelectorAll("[data-lang]");
-            var emailPlaceholder = {
-                nl: "E-mailadres",
-                en: "Email",
-                de: "E-Mail",
-                fr: "Courriel"
-            };
-            var passwordPlaceholder = {
-                nl: "Wachtwoord",
-                en: "Password",
-                de: "Passwort",
-                fr: "Mot de passe"
-            };
+    .insult{
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(36px, 6.6vw, 96px);
+      font-weight:700;
+      margin:0;
+      line-height:0.95;
+      background: linear-gradient(90deg, var(--accent1), var(--accent2));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      position:relative;
+      padding-right:8px;
+    }
 
-            elements.forEach(function (element) {
-                element.style.display = element.getAttribute("data-lang") === language ? "block" : "none";
-            });
+    /* A subtle neon outline effect */
+    .insult::after{
+      content: '';
+      position:absolute;inset:0;
+      text-shadow: 0 6px 24px rgba(123,226,255,0.08), 0 2px 6px rgba(255,122,182,0.06);
+      mix-blend-mode: screen;
+      pointer-events:none;
+    }
 
-            // Update placeholders based on selected language
-            document.querySelector('input[name="email"]').placeholder = emailPlaceholder[language];
-            document.querySelector('input[name="password"]').placeholder = passwordPlaceholder[language];
-            document.querySelector('button[type="submit"]').innerText = {
-                nl: "Verbind",
-                en: "Connect",
-                de: "Verbinden",
-                fr: "Connecter"
-            }[language];
-        }
-    </script>
+    /* Decorative ribbon */
+    .ribbon{
+      display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border-radius:999px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      border:1px solid rgba(255,255,255,0.04);
+      color:rgba(255,255,255,0.9);
+      font-weight:600;font-size:14px;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 6px 22px rgba(2,6,23,0.6);
+    }
+
+    /* small footer controls */
+    .controls{
+      margin-top:22px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;
+    }
+    .btn{
+      appearance:none;border:0;padding:10px 14px;border-radius:10px;font-weight:600;cursor:pointer;
+      background:linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      color: white;border:1px solid rgba(255,255,255,0.06);
+      transition: transform .15s ease, opacity .15s ease;
+    }
+    .btn:active{transform:scale(.98)}
+
+    .copy-hint{font-size:13px;color:rgba(255,255,255,0.6)}
+
+    /* Responsive tweaks */
+    @media (max-width:560px){
+      .card{padding:24px}
+      .logo{width:56px;height:56px;font-size:22px}
+    }
+  </style>
 </head>
-<body onload="changeLanguage()">
+<body>
+  <main class="card" role="main" aria-labelledby="title">
+    <header class="heading">
+      <div class="logo" aria-hidden>KP</div>
+      <div>
+        <h1 id="title">Kleine demo — pure stijl</h1>
+        <div class="subtitle">Een speelse opmaak. Tekst hieronder is exact zoals gevraagd.</div>
+      </div>
+    </header>
 
-<div class="container">
-    <div class="language-select">
-        <select id="language" onchange="changeLanguage()">
-            <option value="nl">Nederlands</option>
-            <option value="en">English</option>
-            <option value="de">Deutsch</option>
-            <option value="fr">Français</option>
-        </select>
-    </div>
+    <section class="insult-wrap" aria-label="Hoofdtekst">
+      <!-- De zin die je vroeg: -->
+      <p class="insult" id="insult-text">keano is een prutser</p>
 
-    <!-- Nederlands -->
-    <div data-lang="nl">
-        <h1>Welkom bij Gratis WiFi</h1>
-        <p>Vul uw e-mailadres en wachtwoord in om toegang te krijgen tot ons netwerk.</p>
-    </div>
+      <div class="ribbon" role="note" aria-hidden>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+          <path d="M12 2v20M2 12h20" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        Gemaakt voor demonstratie
+      </div>
 
-    <!-- Engels -->
-    <div data-lang="en">
-        <h1>Welcome to Free WiFi</h1>
-        <p>Enter your email address and password to access our network.</p>
-    </div>
+      <div class="controls">
+        <button class="btn" id="btn-copy" aria-label="Kopieer tekst">Kopieer tekst</button>
+        <button class="btn" id="btn-toggle" aria-pressed="false">Toggle stijl</button>
+        <div class="copy-hint" id="copy-hint">Klik & kopieer de zin.</div>
+      </div>
+    </section>
 
-    <!-- Duits -->
-    <div data-lang="de">
-        <h1>Willkommen beim kostenlosen WLAN</h1>
-        <p>Geben Sie Ihre E-Mail-Adresse und Ihr Passwort ein, um auf unser Netzwerk zuzugreifen.</p>
-    </div>
+  </main>
 
-    <!-- Frans -->
-    <div data-lang="fr">
-        <h1>Bienvenue au WiFi Gratuit</h1>
-        <p>Entrez votre adresse e-mail et mot de passe pour accéder à notre réseau.</p>
-    </div>
+  <script>
+    // Copy-to-clipboard simple logic
+    const btn = document.getElementById('btn-copy');
+    const textEl = document.getElementById('insult-text');
+    const hint = document.getElementById('copy-hint');
 
-    <form action="/submit-login" method="post">
-        <input type="email" name="email" placeholder="E-mailadres" required>
-        <input type="password" name="password" placeholder="Wachtwoord" required>
-        <button type="submit">Verbind</button>
-    </form>
-    <footer>
-        &copy; 2024 Gratis WiFi Service
-    </footer>
-</div>
+    btn.addEventListener('click', async () => {
+      try{
+        await navigator.clipboard.writeText(textEl.textContent.trim());
+        hint.textContent = 'Gekopieerd!';
+        setTimeout(()=> hint.textContent = 'Klik & kopieer de zin.', 1800);
+      }catch(e){
+        hint.textContent = 'Kopiëren mislukt — selecteer handmatig.';
+      }
+    });
 
+    // Toggle between two display styles (just for fun)
+    const toggle = document.getElementById('btn-toggle');
+    toggle.addEventListener('click', ()=>{
+      const pressed = toggle.getAttribute('aria-pressed') === 'true';
+      toggle.setAttribute('aria-pressed', String(!pressed));
+      if(pressed){
+        textEl.style.fontSize='';
+        textEl.style.letterSpacing='';
+        textEl.style.opacity='1';
+      }else{
+        textEl.style.fontSize='calc(min(96px, 9vw))';
+        textEl.style.letterSpacing='-0.02em';
+        textEl.style.opacity='0.98';
+      }
+    });
+  </script>
 </body>
 </html>
