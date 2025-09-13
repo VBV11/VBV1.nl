@@ -1,119 +1,269 @@
 <!doctype html>
 <html lang="nl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Mick is een kneus</title>
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mini Tetris - Keano's versie</title>
   <style>
     :root{
-      --bg:#0b0b0b; /* deep black */
-      --card:#0f0f0f;
-      --accent:#ffffff; /* white */
-      --muted:rgba(255,255,255,0.12);
+      --cell-size: 30px;
+      --cols: 10;
+      --rows: 20;
+      --board-width: calc(var(--cols) * var(--cell-size));
+      --board-height: calc(var(--rows) * var(--cell-size));
     }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family: 'Montserrat', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-      background: radial-gradient(1200px 600px at 10% 20%, rgba(255,255,255,0.02), transparent),
-                  linear-gradient(180deg,#050505 0%, #0b0b0b 100%);
-      color:var(--accent);
-      display:grid;
-      place-items:center;
-      padding:32px;
-    }
-
-    .card{
-      width:min(1100px, 94vw);
-      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      border:1px solid var(--muted);
-      padding:48px 56px;
-      border-radius:24px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
-      backdrop-filter: blur(6px) saturate(90%);
-      text-align:center;
-      position:relative;
-      overflow:hidden;
-    }
-
-    /* decorative corner circles */
-    .card::before, .card::after{
-      content:'';
-      position:absolute;
-      width:360px;height:360px;border-radius:50%;
-      background:radial-gradient(circle at 30% 30%, rgba(255,255,255,0.03), transparent 40%);
-      pointer-events:none;opacity:0.9;
-    }
-    .card::before{right:-120px;top:-100px;transform:rotate(10deg)}
-    .card::after{left:-140px;bottom:-120px;transform:rotate(-8deg)}
-
-    h1{
-      margin:0 0 12px 0;
-      font-family: 'Playfair Display', serif;
-      font-weight:900;
-      letter-spacing: -0.02em;
-      font-size: clamp(48px, 7.5vw, 130px);
-      line-height:0.85;
-      color:var(--accent);
-      text-shadow: 0 6px 18px rgba(0,0,0,0.7), 0 1px 0 rgba(255,255,255,0.02);
-      transform: translateY(0);
-      transition: transform .6s cubic-bezier(.2,.9,.3,1);
-    }
-
-    .sub{
-      font-size: clamp(14px, 1.6vw, 20px);
-      color:rgba(255,255,255,0.65);
-      margin-top:6px;
-      font-weight:300;
-    }
-
-    /* fancy underline */
-    .underline{
-      display:inline-block;
-      position:relative;
-      padding:8px 18px;
-      border-radius:999px;
-      background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      margin-top:18px;
-      box-shadow: 0 6px 24px rgba(0,0,0,0.6);
-    }
-    .underline::after{
-      content:'';position:absolute;left:8px;right:8px;bottom:6px;height:6px;border-radius:999px;
-      background:linear-gradient(90deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
-      transform:translateY(6px) scaleX(0.98);
-    }
-
-    /* small decorative line under */
-    .line{
-      width:84px;height:4px;margin:26px auto 0;border-radius:999px;background:var(--muted);
-    }
-
-    /* subtle hover effect for interaction */
-    .card:hover h1{ transform: translateY(-6px) }
-
-    /* accessibility: prefers-reduced-motion */
-    @media (prefers-reduced-motion:reduce){
-      .card, h1{transition:none}
-    }
-
-    /* responsive tweaks */
-    @media (max-width:520px){
-      .card{padding:28px}
-      .underline{padding:6px 12px}
-    }
+    body{font-family: Inter, system-ui, Arial; background:#111; color:#eee; display:flex; gap:24px; align-items:flex-start; justify-content:center; padding:24px;}
+    .game{display:flex; gap:20px;}
+    canvas{background:#0b0b0b; border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,0.7);}
+    .board{width:var(--board-width); height:var(--board-height);}
+    .sidebar{width:220px; display:flex; flex-direction:column; gap:12px}
+    .panel{background:#0f1720; padding:12px; border-radius:8px; min-height:60px}
+    h1{font-size:16px; margin:0 0 6px}
+    .big{font-size:20px; letter-spacing:0.6px}
+    .controls{font-size:13px; color:#bfc7d6}
+    .btn{background:#1f2937; color:#dbeafe; border:0; padding:8px; border-radius:6px; cursor:pointer}
+    .row{display:flex; justify-content:space-between; align-items:center}
+    footer{font-size:12px; color:#7b8794; margin-top:8px}
   </style>
 </head>
 <body>
-  <main class="card" role="main" aria-label="Hero banner met tekst">
-    <h1 aria-hidden="false">Mick is een kneus</h1>
-    <div class="sub">kneus (de ~ (m./v.)): iem. die zwak of onhandig is ⇒ sul, slapjanus, sukkel</div>
-    <div class="underline" aria-hidden="true"></div>
-    <div class="line" aria-hidden="true"></div>
-  </main>
+  <div class="game">
+    <canvas id="board" class="board" width="300" height="600"></canvas>
+    <div class="sidebar">
+      <div class="panel">
+        <h1>Mini Tetris</h1>
+        <div class="big" id="score">Score: 0</div>
+        <div id="level">Level: 1</div>
+      </div>
+      <div class="panel">
+        <h1>Volgend</h1>
+        <canvas id="next" width="120" height="120" style="background:#071018;border-radius:6px"></canvas>
+      </div>
+      <div class="panel controls">
+        <div class="row"><div>Besturing</div><div>← → ↓ ⬆ / Space</div></div>
+        <div class="row"><small>R: Reset</small><small>P: Pause</small></div>
+      </div>
+      <div class="panel">
+        <button id="start" class="btn">Start / Hervat</button>
+        <button id="reset" class="btn">Reset (R)</button>
+        <footer>Gemaakt door ChatGPT — simpele, leuke Tetris-clone.</footer>
+      </div>
+    </div>
+  </div>
+
+<script>
+// Kleine Tetris-implementatie in één bestand.
+const COLS = 10, ROWS = 20, CELL = 30;
+const canvas = document.getElementById('board');
+const ctx = canvas.getContext('2d');
+const nextCanvas = document.getElementById('next');
+const nctx = nextCanvas.getContext('2d');
+canvas.width = COLS * CELL; canvas.height = ROWS * CELL;
+
+// Kleuren voor blokken
+const COLORS = ['#000000','#ef476f','#ffd166','#06d6a0','#118ab2','#073b4c','#8d99ae','#f72585'];
+
+// Tetromino vormen (4x4 matrices)
+const TETROMINOES = {
+  I: [[0,0,0,0],[1,1,1,1],[0,0,0,0],[0,0,0,0]],
+  J: [[2,0,0],[2,2,2],[0,0,0]],
+  L: [[0,0,3],[3,3,3],[0,0,0]],
+  O: [[4,4],[4,4]],
+  S: [[0,5,5],[5,5,0],[0,0,0]],
+  T: [[0,6,0],[6,6,6],[0,0,0]],
+  Z: [[7,7,0],[0,7,7],[0,0,0]]
+};
+const PIECES = Object.keys(TETROMINOES);
+
+function createMatrix(w,h){
+  const m = [];
+  for(let y=0;y<h;y++) m.push(new Array(w).fill(0));
+  return m;
+}
+
+let board = createMatrix(COLS, ROWS);
+let current = null;
+let nextPiece = null;
+let dropCounter = 0;
+let dropInterval = 800;
+let lastTime = 0;
+let score = 0;
+let level = 1;
+let gameOver = false;
+let paused = false;
+
+function reset(){
+  board = createMatrix(COLS, ROWS);
+  score = 0; level = 1;
+  dropInterval = 800;
+  current = createPiece(randomPiece());
+  nextPiece = createPiece(randomPiece());
+  gameOver = false;
+  paused = false;
+  updateScore();
+}
+
+function randomPiece(){
+  return PIECES[Math.floor(Math.random()*PIECES.length)];
+}
+
+function createPiece(type){
+  const matrix = TETROMINOES[type].map(row=>row.slice());
+  return {type, matrix, x: Math.floor(COLS/2)-Math.ceil(matrix[0].length/2), y: -1};
+}
+
+function collide(board, piece){
+  const m = piece.matrix; const o = {x:piece.x,y:piece.y};
+  for(let y=0;y<m.length;y++){
+    for(let x=0;x<m[y].length;x++){
+      if(m[y][x] && (board[y+o.y] && board[y+o.y][x+o.x]) !== 0) return true;
+      if(m[y][x] && (y+o.y)>=ROWS) return true;
+    }
+  }
+  return false;
+}
+
+function merge(board, piece){
+  piece.matrix.forEach((row,y)=>{
+    row.forEach((value,x)=>{
+      if(value) board[y+piece.y][x+piece.x] = value;
+    });
+  });
+}
+
+function rotate(matrix, dir){
+  // transpose
+  for(let y=0;y<matrix.length;y++){
+    for(let x=0;x<y;x++){
+      [matrix[x][y],matrix[y][x]] = [matrix[y][x],matrix[x][y]];
+    }
+  }
+  if(dir>0) matrix.forEach(row=>row.reverse()); else matrix.reverse();
+}
+
+function playerRotate(dir){
+  const m = current.matrix;
+  rotate(m,dir);
+  let offset = 1;
+  while(collide(board,current)){
+    current.x += offset;
+    offset = -(offset + (offset>0?1:-1));
+    if(offset > m[0].length){ rotate(m,-dir); current.x = Math.floor(COLS/2)-Math.ceil(m[0].length/2); return; }
+  }
+}
+
+function playerDrop(){
+  current.y++;
+  if(collide(board,current)){
+    current.y--;
+    merge(board,current);
+    sweepLines();
+    current = nextPiece;
+    nextPiece = createPiece(randomPiece());
+    if(collide(board,current)) gameOver = true;
+  }
+  dropCounter = 0;
+}
+
+function playerMove(dir){
+  current.x += dir;
+  if(collide(board,current)) current.x -= dir;
+}
+
+function sweepLines(){
+  let rowCount = 0;
+  outer: for(let y=ROWS-1;y>=0;y--){
+    for(let x=0;x<COLS;x++) if(board[y][x]===0) continue outer;
+    const row = board.splice(y,1)[0].fill(0);
+    board.unshift(row);
+    y++;
+    rowCount++;
+  }
+  if(rowCount>0){
+    const points = [0,40,100,300,1200];
+    score += points[rowCount] * level;
+    level = Math.floor(score / 500) + 1;
+    dropInterval = Math.max(100,800 - (level-1)*80);
+    updateScore();
+  }
+}
+
+function updateScore(){
+  document.getElementById('score').textContent = 'Score: ' + score;
+  document.getElementById('level').textContent = 'Level: ' + level;
+}
+
+function drawCell(x,y,val){
+  ctx.fillStyle = COLORS[val];
+  ctx.fillRect(x*CELL+1,y*CELL+1,CELL-2,CELL-2);
+}
+
+function draw(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  // draw board
+  for(let y=0;y<ROWS;y++){
+    for(let x=0;x<COLS;x++){
+      const val = board[y][x];
+      if(val) drawCell(x,y,val);
+      else{
+        // draw faint grid
+        ctx.strokeStyle = '#0b1220';
+        ctx.strokeRect(x*CELL+0.5,y*CELL+0.5,CELL,CELL);
+      }
+    }
+  }
+  // draw current
+  if(current) current.matrix.forEach((row,y)=>row.forEach((val,x)=>{ if(val && (y+current.y)>=0) drawCell(x+current.x,y+current.y,val); }));
+}
+
+function drawNext(){
+  nctx.clearRect(0,0,nextCanvas.width,nextCanvas.height);
+  const size = 20; const pad = 15;
+  if(!nextPiece) return;
+  const m = nextPiece.matrix;
+  for(let y=0;y<m.length;y++){
+    for(let x=0;x<m[y].length;x++){
+      const val = m[y][x];
+      if(val){
+        nctx.fillStyle = COLORS[val];
+        nctx.fillRect(pad + x*size, pad + y*size, size-2, size-2);
+      }
+    }
+  }
+}
+
+function update(time=0){
+  if(gameOver) return;
+  const delta = time - lastTime;
+  lastTime = time;
+  if(!paused){
+    dropCounter += delta;
+    if(dropCounter > dropInterval) playerDrop();
+  }
+  draw();
+  drawNext();
+  requestAnimationFrame(update);
+}
+
+// input
+document.addEventListener('keydown', e => {
+  if(e.key === 'ArrowLeft') playerMove(-1);
+  if(e.key === 'ArrowRight') playerMove(1);
+  if(e.key === 'ArrowDown') { playerDrop(); }
+  if(e.key === 'ArrowUp') playerRotate(1);
+  if(e.code === 'Space') { playerRotate(1); }
+  if(e.key.toLowerCase() === 'p'){ paused = !paused; document.getElementById('start').textContent = paused ? 'Hervat' : 'Pauze'; }
+  if(e.key.toLowerCase() === 'r'){ reset(); }
+});
+
+// buttons
+document.getElementById('start').addEventListener('click', ()=>{ paused = false; document.getElementById('start').textContent = 'Pauze'; });
+document.getElementById('reset').addEventListener('click', reset);
+
+// start game
+reset();
+update();
+
+</script>
 </body>
 </html>
-
-
