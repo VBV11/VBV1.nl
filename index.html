@@ -3,119 +3,123 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hoi</title>
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
+  <title>Veilige kopieerknop voor commando</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
   <style>
     :root{
-      --bg:#0b0b0b; /* deep black */
-      --card:#0f0f0f;
-      --accent:#ffffff; /* white */
-      --muted:rgba(255,255,255,0.12);
+      --bg:#0b0b0b; --accent:#fff; --muted:rgba(255,255,255,0.12); --success:#16a34a;
     }
     *{box-sizing:border-box}
-    html,body{height:100%}
     body{
-      margin:0;
-      font-family: 'Montserrat', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-      background: radial-gradient(1200px 600px at 10% 20%, rgba(255,255,255,0.02), transparent),
-                  linear-gradient(180deg,#050505 0%, #0b0b0b 100%);
-      color:var(--accent);
-      display:grid;
-      place-items:center;
-      padding:32px;
+      margin:0; min-height:100vh; display:grid; place-items:center;
+      font-family:Montserrat,system-ui,Arial; background:#080808; color:var(--accent);
+      padding:28px;
     }
-
     .card{
-      width:min(1100px, 94vw);
+      width:min(980px,94vw); padding:28px; border-radius:12px;
       background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
       border:1px solid var(--muted);
-      padding:48px 56px;
-      border-radius:24px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
-      backdrop-filter: blur(6px) saturate(90%);
-      text-align:center;
-      position:relative;
-      overflow:hidden;
     }
-
-    /* decorative corner circles */
-    .card::before, .card::after{
-      content:'';
-      position:absolute;
-      width:360px;height:360px;border-radius:50%;
-      background:radial-gradient(circle at 30% 30%, rgba(255,255,255,0.03), transparent 40%);
-      pointer-events:none;opacity:0.9;
+    h1{ margin:0 0 8px 0; font-size:22px; }
+    p.sub{ margin:0 0 18px 0; color:rgba(255,255,255,0.7); }
+    label{ display:block; margin-bottom:8px; font-size:13px }
+    textarea{
+      width:100%; min-height:96px; padding:12px; border-radius:8px;
+      background:rgba(0,0,0,0.4); border:1px solid rgba(255,255,255,0.04);
+      color:var(--accent); font-family:monospace; font-size:13px;
+      resize:vertical;
     }
-    .card::before{right:-120px;top:-100px;transform:rotate(10deg)}
-    .card::after{left:-140px;bottom:-120px;transform:rotate(-8deg)}
-
-    h1{
-      margin:0 0 12px 0;
-      font-family: 'Playfair Display', serif;
-      font-weight:900;
-      letter-spacing: -0.02em;
-      font-size: clamp(48px, 7.5vw, 130px);
-      line-height:0.85;
-      color:var(--accent);
-      text-shadow: 0 6px 18px rgba(0,0,0,0.7), 0 1px 0 rgba(255,255,255,0.02);
-      transform: translateY(0);
-      transition: transform .6s cubic-bezier(.2,.9,.3,1);
+    .row{ display:flex; gap:12px; align-items:center; margin-top:12px; flex-wrap:wrap }
+    button{
+      padding:10px 14px; border-radius:8px; border:0; cursor:pointer;
+      background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      color:var(--accent); font-weight:600;
     }
-
-    .sub{
-      font-size: clamp(14px, 1.6vw, 20px);
-      color:rgba(255,255,255,0.65);
-      margin-top:6px;
-      font-weight:300;
-    }
-
-    /* fancy underline */
-    .underline{
-      display:inline-block;
-      position:relative;
-      padding:8px 18px;
-      border-radius:999px;
-      background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      margin-top:18px;
-      box-shadow: 0 6px 24px rgba(0,0,0,0.6);
-    }
-    .underline::after{
-      content:'';position:absolute;left:8px;right:8px;bottom:6px;height:6px;border-radius:999px;
-      background:linear-gradient(90deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
-      transform:translateY(6px) scaleX(0.98);
-    }
-
-    /* small decorative line under */
-    .line{
-      width:84px;height:4px;margin:26px auto 0;border-radius:999px;background:var(--muted);
-    }
-
-    /* subtle hover effect for interaction */
-    .card:hover h1{ transform: translateY(-6px) }
-
-    /* accessibility: prefers-reduced-motion */
-    @media (prefers-reduced-motion:reduce){
-      .card, h1{transition:none}
-    }
-
-    /* responsive tweaks */
-    @media (max-width:520px){
-      .card{padding:28px}
-      .underline{padding:6px 12px}
+    .feedback{ margin-left:8px; color:rgba(255,255,255,0.7); min-width:160px }
+    .feedback.success{ color:var(--success) }
+    .note{ margin-top:14px; font-size:13px; color:rgba(255,255,255,0.6) }
+    .warn{ color:#ffb86b; font-weight:600 }
+    @media (max-width:640px){
+      .row{ flex-direction:column; align-items:stretch }
+      .feedback{ margin-left:0 }
     }
   </style>
 </head>
 <body>
-  <main class="card" role="main" aria-label="Hero banner met tekst">
-    <h1 aria-hidden="false">Hoi</h1>
-    <div class="sub">https://raw.githubusercontent.com/VBV11/BF/refs/heads/main/BF.ps1</div>
-    <div class="underline" aria-hidden="true"></div>
-    <div class="line" aria-hidden="true"></div>
+  <main class="card" role="main" aria-label="Veilige kopieer pagina">
+    <h1>Veilige kopieerknop voor jouw commando</h1>
+    <p class="sub">Plak hier je eigen commando (bijv. een GitHub-instructie). De pagina kopieert alleen wat jíj plakt — er gebeurt géén automatisch downloaden of uitvoeren.</p>
+
+    <label for="userCmd">Plak hier je commando (LET OP: plak alleen als je weet wat het doet)</label>
+    <textarea id="userCmd" placeholder="Plak hier je commando, bijvoorbeeld: git clone https://github.com/...."></textarea>
+
+    <div class="row" aria-live="polite">
+      <button id="previewBtn">Opslaan & tonen</button>
+      <button id="copyBtn" disabled title="Kopieer het opgeslagen commando">Kopieer</button>
+      <div id="feedback" class="feedback">Nog niets opgeslagen</div>
+    </div>
+
+    <div class="note">
+      <div class="warn">Belangrijke veiligheidsadvies:</div>
+      <ul>
+        <li>Plak alleen commando's die je vertrouwt. Voer nooit blind commando's uit die iets van internet downloaden en meteen uitvoeren.</li>
+        <li>Zo kun je veiliger werken: <strong>git clone</strong> → inspecteer de code → verifieer auteur/commit SHA / check release assets en hashes.</li>
+        <li>Als je wilt, kan ik je voorbeeldcommando helpen omzetten naar een veilige instructie (bijv. clone + inspecteer + run) — maar share het commando zelf alleen hier als je dat wil laten controleren.</li>
+      </ul>
+    </div>
   </main>
+
+  <script>
+    (function(){
+      const txt = document.getElementById('userCmd');
+      const previewBtn = document.getElementById('previewBtn');
+      const copyBtn = document.getElementById('copyBtn');
+      const feedback = document.getElementById('feedback');
+
+      let saved = '';
+
+      previewBtn.addEventListener('click', () => {
+        const v = txt.value.trim();
+        if (!v) {
+          feedback.textContent = 'Geen tekst ingevoerd';
+          copyBtn.disabled = true;
+          return;
+        }
+        // sla lokaal op (niet verzenden)
+        saved = v;
+        feedback.textContent = 'Opgeslagen — klaar om te kopiëren';
+        feedback.classList.add('success');
+        copyBtn.disabled = false;
+      });
+
+      copyBtn.addEventListener('click', async () => {
+        if (!saved) return;
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(saved);
+          } else {
+            const ta = document.createElement('textarea');
+            ta.value = saved;
+            ta.style.position='fixed'; ta.style.left='-9999px';
+            document.body.appendChild(ta); ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+          }
+          feedback.textContent = 'Gekopieerd ✅';
+          setTimeout(()=>{ feedback.textContent = 'Opgeslagen — klaar om te kopiëren'; },2000);
+        } catch(e){
+          feedback.textContent = 'Kopiëren mislukt — gebruik Ctrl/Cmd+C';
+        }
+      });
+
+      // Extra: Ctrl/Cmd+Enter opslaan
+      txt.addEventListener('keydown', (e)=>{
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+          e.preventDefault();
+          previewBtn.click();
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
-
-
-
-
