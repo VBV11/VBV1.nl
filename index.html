@@ -2,122 +2,226 @@
 <html lang="nl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Veilige kopieerknop voor commando</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Code kopiëren - centraal</title>
   <style>
     :root{
-      --bg:#0b0b0b; --accent:#fff; --muted:rgba(255,255,255,0.12); --success:#16a34a;
+      --bg:#0f1724;
+      --card:#0b1220;
+      --muted:#94a3b8;
+      --accent:#60a5fa;
+      --success:#10b981;
     }
-    *{box-sizing:border-box}
+    html,body{height:100%; margin:0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
     body{
-      margin:0; min-height:100vh; display:grid; place-items:center;
-      font-family:Montserrat,system-ui,Arial; background:#080808; color:var(--accent);
-      padding:28px;
+      background: linear-gradient(180deg, #071029 0%, #081226 100%);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color: #e6eef8;
+      padding:20px;
+      box-sizing:border-box;
     }
-    .card{
-      width:min(980px,94vw); padding:28px; border-radius:12px;
-      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      border:1px solid var(--muted);
+
+    /* centrale kaart */
+    .center-card{
+      width: min(1000px, 92%);
+      max-width: 900px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border: 1px solid rgba(255,255,255,0.04);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(2,6,23,0.6);
+      position: relative;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
     }
-    h1{ margin:0 0 8px 0; font-size:22px; }
-    p.sub{ margin:0 0 18px 0; color:rgba(255,255,255,0.7); }
-    label{ display:block; margin-bottom:8px; font-size:13px }
-    textarea{
-      width:100%; min-height:96px; padding:12px; border-radius:8px;
-      background:rgba(0,0,0,0.4); border:1px solid rgba(255,255,255,0.04);
-      color:var(--accent); font-family:monospace; font-size:13px;
+
+    h1{font-size:1.05rem; margin:0; color:var(--muted);}
+    p.small{margin:0; font-size:0.9rem; color:var(--muted);}
+
+    /* textarea / code area */
+    textarea.code-input{
+      width:100%;
+      min-height:320px;
+      max-height:70vh;
       resize:vertical;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Courier New", monospace;
+      font-size:0.95rem;
+      line-height:1.45;
+      background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.008));
+      color:#e6eef8;
+      border: 1px solid rgba(255,255,255,0.04);
+      padding:16px;
+      border-radius:8px;
+      outline:none;
+      box-sizing:border-box;
     }
-    .row{ display:flex; gap:12px; align-items:center; margin-top:12px; flex-wrap:wrap }
-    button{
-      padding:10px 14px; border-radius:8px; border:0; cursor:pointer;
-      background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
-      color:var(--accent); font-weight:600;
+    textarea.code-input:focus{
+      box-shadow: 0 0 0 4px rgba(96,165,250,0.08);
+      border-color: var(--accent);
     }
-    .feedback{ margin-left:8px; color:rgba(255,255,255,0.7); min-width:160px }
-    .feedback.success{ color:var(--success) }
-    .note{ margin-top:14px; font-size:13px; color:rgba(255,255,255,0.6) }
-    .warn{ color:#ffb86b; font-weight:600 }
-    @media (max-width:640px){
-      .row{ flex-direction:column; align-items:stretch }
-      .feedback{ margin-left:0 }
+
+    /* kopieer knop gecentreerd */
+    .controls{
+      display:flex;
+      justify-content:center;
+      gap:12px;
+      align-items:center;
+      margin-top:6px;
+    }
+
+    button.copy-btn{
+      appearance:none;
+      border: none;
+      background: linear-gradient(180deg, #3b82f6, #2563eb);
+      color:white;
+      padding:12px 18px;
+      border-radius:10px;
+      font-weight:600;
+      cursor:pointer;
+      box-shadow: 0 8px 18px rgba(37,99,235,0.18);
+      transition: transform .12s ease, box-shadow .12s ease, opacity .12s;
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      font-size:0.98rem;
+    }
+    button.copy-btn:active{ transform: translateY(1px) scale(.995); }
+    button.copy-btn:disabled{
+      opacity:0.6; cursor:not-allowed;
+      box-shadow:none;
+    }
+
+    .status{
+      font-size:0.9rem;
+      color:var(--muted);
+      min-width:120px;
+      text-align:center;
+    }
+
+    /* kleine helper voor mobiele layout */
+    @media (max-width:520px){
+      textarea.code-input{ min-height:220px; }
+      button.copy-btn{ padding:10px 14px; font-size:0.95rem;}
     }
   </style>
 </head>
 <body>
-  <main class="card" role="main" aria-label="Veilige kopieer pagina">
-    <h1>Veilige kopieerknop voor jouw commando</h1>
-    <p class="sub">Plak hier je eigen commando (bijv. een GitHub-instructie). De pagina kopieert alleen wat jíj plakt — er gebeurt géén automatisch downloaden of uitvoeren.</p>
+  <main class="center-card" role="main">
+    <header>
+      <h1>Plak of typ je code hieronder</h1>
+      <p class="small">Klik op <strong>Kopieer</strong> om de inhoud naar je klembord te kopiëren.</p>
+    </header>
 
-    <label for="userCmd">Plak hier je commando (LET OP: plak alleen als je weet wat het doet)</label>
-    <textarea id="userCmd" placeholder="Plak hier je commando, bijvoorbeeld: git clone https://github.com/...."></textarea>
+    <!-- code veld -->
+    <label for="code" style="position:absolute;left:-9999px;top:auto;">Code invoer</label>
+    <textarea id="code" class="code-input" spellcheck="false" aria-label="Code invoer">
+<!-- Voorbeeld: vervang dit met je eigen code -->
+function halloWereld() {
+  console.log("Hallo wereld!");
+}
+    </textarea>
 
-    <div class="row" aria-live="polite">
-      <button id="previewBtn">Opslaan & tonen</button>
-      <button id="copyBtn" disabled title="Kopieer het opgeslagen commando">Kopieer</button>
-      <div id="feedback" class="feedback">Nog niets opgeslagen</div>
-    </div>
+    <!-- controls gecentreerd -->
+    <div class="controls" aria-hidden="false">
+      <button id="copyBtn" class="copy-btn" aria-label="Kopieer code naar klembord">
+        <!-- eenvoudige icon (SVG) -->
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+          <path d="M8 7H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+          <rect x="9" y="3" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1.6"></rect>
+        </svg>
+        Kopieer
+      </button>
 
-    <div class="note">
-      <div class="warn">Belangrijke veiligheidsadvies:</div>
-      <ul>
-        <li>Plak alleen commando's die je vertrouwt. Voer nooit blind commando's uit die iets van internet downloaden en meteen uitvoeren.</li>
-        <li>Zo kun je veiliger werken: <strong>git clone</strong> → inspecteer de code → verifieer auteur/commit SHA / check release assets en hashes.</li>
-        <li>Als je wilt, kan ik je voorbeeldcommando helpen omzetten naar een veilige instructie (bijv. clone + inspecteer + run) — maar share het commando zelf alleen hier als je dat wil laten controleren.</li>
-      </ul>
+      <div id="status" class="status" role="status" aria-live="polite">Klaar</div>
     </div>
   </main>
 
   <script>
     (function(){
-      const txt = document.getElementById('userCmd');
-      const previewBtn = document.getElementById('previewBtn');
+      const codeEl = document.getElementById('code');
       const copyBtn = document.getElementById('copyBtn');
-      const feedback = document.getElementById('feedback');
+      const statusEl = document.getElementById('status');
 
-      let saved = '';
-
-      previewBtn.addEventListener('click', () => {
-        const v = txt.value.trim();
-        if (!v) {
-          feedback.textContent = 'Geen tekst ingevoerd';
-          copyBtn.disabled = true;
-          return;
+      // toon tijdelijke status
+      function setStatus(text, success = true, ms = 1800){
+        statusEl.textContent = text;
+        if(success){
+          statusEl.style.color = '';
+        } else {
+          statusEl.style.color = 'salmon';
         }
-        // sla lokaal op (niet verzenden)
-        saved = v;
-        feedback.textContent = 'Opgeslagen — klaar om te kopiëren';
-        feedback.classList.add('success');
-        copyBtn.disabled = false;
-      });
+        if(ms > 0){
+          clearTimeout(setStatus._t);
+          setStatus._t = setTimeout(()=> {
+            statusEl.textContent = 'Klaar';
+            statusEl.style.color = '';
+          }, ms);
+        }
+      }
+
+      async function copyText(text){
+        // modern API
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          try{
+            await navigator.clipboard.writeText(text);
+            return true;
+          }catch(e){
+            // fallthrough naar legacy
+          }
+        }
+
+        // legacy fallback: gebruik select + document.execCommand (werkt nog in veel browsers)
+        try{
+          const textarea = document.createElement('textarea');
+          textarea.value = text;
+          // voorkomen dat mobiele browsers scrollen
+          textarea.style.position = 'fixed';
+          textarea.style.left = '-9999px';
+          document.body.appendChild(textarea);
+          textarea.select();
+          textarea.setSelectionRange(0, textarea.value.length);
+          const ok = document.execCommand('copy');
+          document.body.removeChild(textarea);
+          return !!ok;
+        } catch(err){
+          return false;
+        }
+      }
 
       copyBtn.addEventListener('click', async () => {
-        if (!saved) return;
-        try {
-          if (navigator.clipboard && navigator.clipboard.writeText) {
-            await navigator.clipboard.writeText(saved);
-          } else {
-            const ta = document.createElement('textarea');
-            ta.value = saved;
-            ta.style.position='fixed'; ta.style.left='-9999px';
-            document.body.appendChild(ta); ta.select();
-            document.execCommand('copy');
-            document.body.removeChild(ta);
-          }
-          feedback.textContent = 'Gekopieerd ✅';
-          setTimeout(()=>{ feedback.textContent = 'Opgeslagen — klaar om te kopiëren'; },2000);
-        } catch(e){
-          feedback.textContent = 'Kopiëren mislukt — gebruik Ctrl/Cmd+C';
+        const text = codeEl.value;
+        if(!text || text.trim().length === 0){
+          setStatus('Er is geen tekst om te kopiëren', false, 2000);
+          return;
+        }
+        copyBtn.disabled = true;
+        const ok = await copyText(text);
+        copyBtn.disabled = false;
+        if(ok){
+          setStatus('Gekopieerd! ✅', true, 1600);
+        } else {
+          setStatus('Kopiëren mislukt — selecteer en kopieer handmatig', false, 4000);
         }
       });
 
-      // Extra: Ctrl/Cmd+Enter opslaan
-      txt.addEventListener('keydown', (e)=>{
-        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      // extra: Ctrl/Cmd+Enter kopiëren
+      document.addEventListener('keydown', (e) => {
+        const mac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+        if((mac && e.metaKey && e.key === 'Enter') || (!mac && e.ctrlKey && e.key === 'Enter')){
           e.preventDefault();
-          previewBtn.click();
+          copyBtn.click();
         }
+      });
+
+      // optioneel: selecteer alles bij dubbelklik op de textarea
+      codeEl.addEventListener('dblclick', () => codeEl.select());
+
+      // kleine a11y: focus outline zichtbaar bij toetsenbordgebruik
+      document.addEventListener('keydown', (e) => {
+        if(e.key === 'Tab') document.body.classList.add('using-keyboard');
       });
     })();
   </script>
