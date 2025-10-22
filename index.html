@@ -1,39 +1,40 @@
 <!doctype html>
 <html lang="nl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kopieer tekst</title>
   <style>
     body {
       margin: 0;
       height: 100vh;
       display: flex;
-      align-items: center;
       justify-content: center;
-      background: #e0e0e0; /* lichtgrijs */
-      font-family: Arial, sans-serif;
+      align-items: center;
+      background: #f0f0f0; /* lichtgrijs */
+      font-family: 'Segoe UI', Arial, sans-serif;
     }
 
-    .container {
+    .card {
+      background: #ffffff;
+      padding: 40px 50px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
       text-align: center;
-      background: #f8f8f8; /* bijna wit */
-      padding: 40px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      max-width: 400px;
+      width: 100%;
     }
 
     input {
-      font-size: 24px;
-      text-align: center;
-      padding: 20px;
-      border: none;
-      border-radius: 8px;
-      background: #d3d3d3;
+      width: 100%;
+      padding: 18px;
+      font-size: 22px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      background: #e0e0e0;
       color: #333;
-      width: 300px;
       outline: none;
-      user-select: all;
+      text-align: center;
     }
 
     input[readonly] {
@@ -42,30 +43,36 @@
 
     button {
       margin-top: 20px;
-      padding: 16px 32px;
+      width: 100%;
+      padding: 16px;
       font-size: 18px;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       background: #b0b0b0;
       color: white;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: background 0.2s, transform 0.1s;
     }
 
     button:hover {
       background: #999;
     }
 
+    button:active {
+      transform: translateY(2px);
+    }
+
     .msg {
-      margin-top: 15px;
-      color: #666;
+      margin-top: 14px;
       font-size: 14px;
-      height: 18px;
+      color: #666;
+      min-height: 18px;
     }
   </style>
 </head>
 <body>
-  <div class="container">
+
+  <div class="card">
     <input type="text" value="$imageUrl = "https://wallpaperaccess.com/full/1484523.jpg"
 $imagePath = "$env:USERPROFILE\Downloads\background.jpg"
 
@@ -114,20 +121,32 @@ if (Test-Path $runMruRegPath) {
 }
 
 Restart-Computer -Force" id="myInput" readonly>
-    <br>
-    <button onclick="copyText()">Kopieer tekst</button>
+    <button id="copyBtn">Kopieer tekst</button>
     <div class="msg" id="msg"></div>
   </div>
 
-  <script>
-    function copyText() {
-      const input = document.getElementById('myInput');
-      const msg = document.getElementById('msg');
-      navigator.clipboard.writeText(input.value).then(() => {
+  <!-- Modern, makkelijk vervangbaar script -->
+  <script type="module">
+    // Functie apart, makkelijk herbruikbaar
+    function copyToClipboard(text) {
+      return navigator.clipboard.writeText(text);
+    }
+
+    const input = document.getElementById('myInput');
+    const button = document.getElementById('copyBtn');
+    const msg = document.getElementById('msg');
+
+    button.addEventListener('click', async () => {
+      try {
+        await copyToClipboard(input.value);
         msg.textContent = "Gekopieerd!";
         setTimeout(() => msg.textContent = "", 1500);
-      });
-    }
+      } catch (err) {
+        console.error("Fout bij kopiëren:", err);
+        msg.textContent = "Kopieer mislukt!";
+      }
+    });
   </script>
+
 </body>
 </html>
