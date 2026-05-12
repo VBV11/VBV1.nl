@@ -3,24 +3,179 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fullscreen Image</title>
+  <title>Loading video...</title>
   <style>
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
       background-color: black;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      color: white;
     }
 
-    .fullscreen-image {
+    .loader {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .spinner {
+      width: 60px;
+      height: 60px;
+      border: 6px solid #333;
+      border-top: 6px solid #fff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .scare {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
       width: 100vw;
       height: 100vh;
-      object-fit: fill; /* stretcht de afbeelding zodat hij het hele scherm vult */
+      z-index: 9999;
+    }
+
+    .scare img {
+      width: 100vw;
+      height: 100vh;
+      object-fit: fill;
       display: block;
+    }
+
+    .scare.active {
+      display: block;
+      animation: flash 0.08s infinite, shake 0.05s infinite;
+    }
+
+    @keyframes flash {
+      0%   { background-color: red;    filter: invert(0)   hue-rotate(0deg)   contrast(1.5); }
+      25%  { background-color: white;  filter: invert(1)   hue-rotate(90deg)  contrast(2); }
+      50%  { background-color: black;  filter: invert(0)   hue-rotate(180deg) contrast(1.8); }
+      75%  { background-color: red;    filter: invert(1)   hue-rotate(270deg) contrast(2); }
+      100% { background-color: white;  filter: invert(0)   hue-rotate(360deg) contrast(1.5); }
+    }
+
+    @keyframes shake {
+      0%   { transform: translate(0, 0) scale(1); }
+      20%  { transform: translate(-15px, 8px) scale(1.05); }
+      40%  { transform: translate(12px, -10px) scale(0.98); }
+      60%  { transform: translate(-8px, -12px) scale(1.03); }
+      80%  { transform: translate(10px, 6px) scale(1.01); }
+      100% { transform: translate(0, 0) scale(1); }
     }
   </style>
 </head>
 <body>
-  <img src="image.jpg" alt="Fullscreen afbeelding" class="fullscreen-image">
+
+  <div class="loader" id="loader">
+    <div class="spinner"></div>
+    <p>Video wordt geladen... <span id="percent">0</span>%</p>
+  </div>
+
+  <div class="scare" id="scare">
+    <img src="image.jpg" alt="">
+  </div>
+
+  <script>
+    // fake loading bar
+    let p = 0;
+    const percent = document.getElementById('percent');
+    const interval = setInterval(() => {
+      p += Math.random() * 8;
+      if (p >= 99) {
+        p = 99;
+        percent.textContent = Math.floor(p);
+        clearInterval(interval);
+        setTimeout(triggerScare, 1500);
+      } else {
+        percent.textContent = Math.floor(p);
+      }
+    }, 200);
+
+    function triggerScare() {
+      document.getElementById('loader').style.display = 'none';
+      document.getElementById('scare').classList.add('active');
+      playScream();
+
+      // probeer fullscreen
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      }
+    }
+
+    // scream geluid via Web Audio API (geen audiobestand nodig)
+    function playScream() {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const duration = 4;
+
+      // white noise voor static/ruis
+      const bufferSize = ctx.sampleRate * duration;
+      const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const output = noiseBuffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        output[i] = (Math.random() * 2 - 1) * 0.8;
+      }
+      const noise = ctx.createBufferSource();
+      noise.buffer = noiseBuffer;
+
+      // distortion filter
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.value = 1000;
+      filter.Q.value = 0.5;
+
+      // gillende oscillator
+      const osc1 = ctx.createOscillator();
+      osc1.type = 'sawtooth';
+      osc1.frequency.setValueAtTime(800, ctx.currentTime);
+      osc1.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + duration);
+
+      const osc2 = ctx.createOscillator();
+      osc2.type = 'square';
+      osc2.frequency.setValueAtTime(1200, ctx.currentTime);
+      osc2.frequency.exponentialRampToValueAtTime(150, ctx.currentTime + duration);
+
+      // wobble effect
+      const lfo = ctx.createOscillator();
+      lfo.frequency.value = 15;
+      const lfoGain = ctx.createGain();
+      lfoGain.gain.value = 300;
+      lfo.connect(lfoGain);
+      lfoGain.connect(osc1.frequency);
+      lfoGain.connect(osc2.frequency);
+
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(1, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
+
+      noise.connect(filter);
+      filter.connect(gain);
+      osc1.connect(gain);
+      osc2.connect(gain);
+      gain.connect(ctx.destination);
+
+      noise.start();
+      osc1.start();
+      osc2.start();
+      lfo.start();
+
+      noise.stop(ctx.currentTime + duration);
+      osc1.stop(ctx.currentTime + duration);
+      osc2.stop(ctx.currentTime + duration);
+      lfo.stop(ctx.currentTime + duration);
+    }
+  </script>
 </body>
 </html>
