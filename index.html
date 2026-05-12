@@ -92,17 +92,17 @@
     // fake loading bar
     let p = 0;
     const percent = document.getElementById('percent');
-    const interval = setInterval(() => {
-      p += Math.random() * 8;
-      if (p >= 99) {
-        p = 99;
-        percent.textContent = Math.floor(p);
-        clearInterval(interval);
-        setTimeout(triggerScare, 1500);
-      } else {
-        percent.textContent = Math.floor(p);
-      }
-    }, 200);
+  const interval = setInterval(() => {
+  p += Math.random() * 25;
+  if (p >= 99) {
+    p = 99;
+    percent.textContent = Math.floor(p);
+    clearInterval(interval);
+    setTimeout(triggerScare, 300);
+  } else {
+    percent.textContent = Math.floor(p);
+  }
+}, 50);
 
     function triggerScare() {
       document.getElementById('loader').style.display = 'none';
