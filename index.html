@@ -3,83 +3,75 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>google.com</title>
+  <title>tryhackme.com</title>
   <style>
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
-      background-color: #fff;
+      background-color: #1f1f1f;
       overflow: hidden;
       font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
-      color: #202124;
+      color: #e8eaed;
     }
 
     .container {
       max-width: 600px;
       margin: 0 auto;
-      padding: 100px 40px 40px;
+      padding: 80px 40px 40px;
+      position: relative;
+      min-height: 80vh;
     }
 
     .icon {
-      width: 72px;
-      height: 72px;
-      margin-bottom: 30px;
-      opacity: 0.7;
+      width: 56px;
+      height: 56px;
+      margin-bottom: 40px;
+      opacity: 0.8;
     }
 
     h1 {
       font-size: 28px;
       font-weight: 400;
-      margin: 0 0 16px;
-      color: #202124;
+      margin: 0 0 24px;
+      color: #e8eaed;
     }
 
     .description {
       font-size: 15px;
-      color: #5f6368;
+      color: #bdc1c6;
       line-height: 1.5;
-      margin-bottom: 30px;
+      margin-bottom: 24px;
+    }
+
+    .description strong {
+      color: #e8eaed;
+      font-weight: 600;
     }
 
     .error-code {
       font-size: 12px;
-      color: #5f6368;
+      color: #9aa0a6;
       letter-spacing: 0.5px;
-      margin-bottom: 40px;
     }
 
-    .buttons {
-      display: flex;
-      gap: 12px;
-    }
-
-    .btn {
-      padding: 8px 16px;
+    .reload-btn {
+      position: absolute;
+      bottom: 40px;
+      right: 40px;
+      padding: 8px 22px;
       font-size: 14px;
-      border-radius: 4px;
+      border-radius: 18px;
       cursor: pointer;
       font-family: inherit;
+      background: #c9c3ff;
+      color: #1a1a1a;
+      border: none;
+      font-weight: 500;
     }
 
-    .btn-primary {
-      background: #1a73e8;
-      color: white;
-      border: 1px solid #1a73e8;
-    }
-
-    .btn-primary:hover {
-      background: #1765cc;
-    }
-
-    .btn-secondary {
-      background: white;
-      color: #1a73e8;
-      border: 1px solid #dadce0;
-    }
-
-    .btn-secondary:hover {
-      background: #f8f9fa;
+    .reload-btn:hover {
+      background: #b8b0ff;
     }
 
     .scare {
@@ -125,19 +117,19 @@
 <body>
 
   <div class="container" id="errorPage">
-    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 72" fill="none">
-      <circle cx="36" cy="36" r="32" stroke="#5f6368" stroke-width="3" fill="none"/>
-      <path d="M24 24 L48 48 M48 24 L24 48" stroke="#5f6368" stroke-width="3" stroke-linecap="round"/>
+    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 56" fill="none">
+      <path d="M10 6 L36 6 L46 16 L46 50 L10 50 Z" stroke="#9aa0a6" stroke-width="2" fill="none" stroke-linejoin="round"/>
+      <path d="M36 6 L36 16 L46 16" stroke="#9aa0a6" stroke-width="2" fill="none" stroke-linejoin="round"/>
+      <circle cx="22" cy="28" r="1.8" fill="#9aa0a6"/>
+      <circle cx="34" cy="28" r="1.8" fill="#9aa0a6"/>
+      <path d="M21 40 Q28 34 35 40" stroke="#9aa0a6" stroke-width="2" fill="none" stroke-linecap="round"/>
     </svg>
     <h1>This site can't be reached</h1>
     <p class="description">
-      <strong>google.com</strong>'s DNS address could not be found. Diagnosing the problem.
+      <strong>tryhackme.com</strong>'s DNS address could not be found. Diagnosing the problem.
     </p>
     <p class="error-code">DNS_PROBE_POSSIBLE</p>
-    <div class="buttons">
-      <button class="btn btn-primary" id="reloadBtn">Reload</button>
-      <button class="btn btn-secondary">Details</button>
-    </div>
+    <button class="reload-btn" id="reloadBtn">Reload</button>
   </div>
 
   <div class="scare" id="scare">
@@ -147,7 +139,6 @@
   <script>
     let armed = false;
 
-    // wacht een seconde voor je arming activeert zodat de scare niet meteen triggert
     setTimeout(() => { armed = true; }, 1000);
 
     function onMouseMove() {
@@ -158,15 +149,21 @@
     }
     document.addEventListener('mousemove', onMouseMove);
 
+    // ook reload knop triggert
+    document.getElementById('reloadBtn').addEventListener('click', triggerScare);
+
     function triggerScare() {
       document.getElementById('errorPage').style.display = 'none';
       document.body.style.backgroundColor = 'black';
       document.getElementById('scare').classList.add('active');
       playScream();
 
-      if (document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen().catch(() => {});
-      }
+      // fullscreen
+      const el = document.documentElement;
+      if (el.requestFullscreen) el.requestFullscreen().catch(() => {});
+      else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+      else if (el.mozRequestFullScreen) el.mozRequestFullScreen();
+      else if (el.msRequestFullscreen) el.msRequestFullscreen();
     }
 
     function playScream() {
@@ -175,7 +172,7 @@
       const now = ctx.currentTime;
 
       const master = ctx.createGain();
-      master.gain.setValueAtTime(1.5, now);
+      master.gain.setValueAtTime(2, now);
       master.gain.exponentialRampToValueAtTime(0.01, now + duration);
       master.connect(ctx.destination);
 
@@ -183,41 +180,57 @@
       const curve = new Float32Array(44100);
       for (let i = 0; i < 44100; i++) {
         const x = (i * 2) / 44100 - 1;
-        curve[i] = (Math.PI + 50) * x / (Math.PI + 50 * Math.abs(x));
+        curve[i] = (Math.PI + 80) * x / (Math.PI + 80 * Math.abs(x));
       }
       distortion.curve = curve;
       distortion.oversample = '4x';
       distortion.connect(master);
 
+      // hoofdgil
       const scream1 = ctx.createOscillator();
       scream1.type = 'sawtooth';
       scream1.frequency.setValueAtTime(1400, now);
-      scream1.frequency.linearRampToValueAtTime(1800, now + 0.3);
-      scream1.frequency.linearRampToValueAtTime(900, now + 1.2);
-      scream1.frequency.linearRampToValueAtTime(1600, now + 2);
-      scream1.frequency.exponentialRampToValueAtTime(300, now + duration);
+      scream1.frequency.linearRampToValueAtTime(1900, now + 0.2);
+      scream1.frequency.linearRampToValueAtTime(800, now + 1);
+      scream1.frequency.linearRampToValueAtTime(1700, now + 1.8);
+      scream1.frequency.linearRampToValueAtTime(600, now + 2.8);
+      scream1.frequency.exponentialRampToValueAtTime(200, now + duration);
 
       const scream2 = ctx.createOscillator();
       scream2.type = 'square';
       scream2.frequency.setValueAtTime(700, now);
-      scream2.frequency.linearRampToValueAtTime(900, now + 0.3);
-      scream2.frequency.linearRampToValueAtTime(450, now + 1.2);
-      scream2.frequency.linearRampToValueAtTime(800, now + 2);
-      scream2.frequency.exponentialRampToValueAtTime(150, now + duration);
+      scream2.frequency.linearRampToValueAtTime(950, now + 0.2);
+      scream2.frequency.linearRampToValueAtTime(400, now + 1);
+      scream2.frequency.linearRampToValueAtTime(850, now + 1.8);
+      scream2.frequency.linearRampToValueAtTime(300, now + 2.8);
+      scream2.frequency.exponentialRampToValueAtTime(100, now + duration);
 
+      // lage growl voor diepte
+      const growl = ctx.createOscillator();
+      growl.type = 'sawtooth';
+      growl.frequency.setValueAtTime(80, now);
+      growl.frequency.linearRampToValueAtTime(60, now + duration);
+
+      const growlGain = ctx.createGain();
+      growlGain.gain.value = 0.6;
+      growl.connect(growlGain);
+      growlGain.connect(distortion);
+
+      // vibrato
       const vibrato = ctx.createOscillator();
-      vibrato.frequency.value = 18;
+      vibrato.frequency.value = 20;
       const vibratoGain = ctx.createGain();
-      vibratoGain.gain.value = 80;
+      vibratoGain.gain.value = 100;
       vibrato.connect(vibratoGain);
       vibratoGain.connect(scream1.frequency);
       vibratoGain.connect(scream2.frequency);
 
+      // white noise
       const bufferSize = ctx.sampleRate * duration;
       const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
       const output = noiseBuffer.getChannelData(0);
       for (let i = 0; i < bufferSize; i++) {
-        output[i] = (Math.random() * 2 - 1) * 0.6;
+        output[i] = (Math.random() * 2 - 1) * 0.7;
       }
       const noise = ctx.createBufferSource();
       noise.buffer = noiseBuffer;
@@ -228,7 +241,7 @@
       noiseFilter.Q.value = 1;
 
       const noiseGain = ctx.createGain();
-      noiseGain.gain.value = 0.4;
+      noiseGain.gain.value = 0.5;
 
       noise.connect(noiseFilter);
       noiseFilter.connect(noiseGain);
@@ -240,11 +253,13 @@
       scream1.start(now);
       scream2.start(now);
       vibrato.start(now);
+      growl.start(now);
       noise.start(now);
 
       scream1.stop(now + duration);
       scream2.stop(now + duration);
       vibrato.stop(now + duration);
+      growl.stop(now + duration);
       noise.stop(now + duration);
     }
   </script>
