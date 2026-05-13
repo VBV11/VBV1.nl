@@ -1,267 +1,314 @@
 <!DOCTYPE html>
-<html lang="en">
+<html dir="ltr" lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>tryhackme.com</title>
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      background-color: #1f1f1f;
-      overflow: hidden;
-      font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
-      color: #e8eaed;
-    }
+<meta charset="UTF-8">
+<meta name="color-scheme" content="light dark">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>google.com</title>
+<style>
+body {
+  --background-color: #fff;
+  --error-code-color: rgb(95, 99, 104);
+  --google-blue-300: rgb(138, 180, 248);
+  --google-blue-600: rgb(26, 115, 232);
+  --google-blue-700: rgb(25, 103, 210);
+  --google-gray-500: rgb(154, 160, 166);
+  --google-gray-700: rgb(95, 99, 104);
+  --google-gray-900: rgb(32, 33, 36);
+  --heading-color: var(--google-gray-900);
+  --primary-button-fill-color-active: var(--google-blue-700);
+  --primary-button-fill-color: var(--google-blue-600);
+  --primary-button-text-color: #fff;
+  --text-color: var(--google-gray-700);
+  background: var(--background-color);
+  color: var(--text-color);
+  font-family: "sans", Arial, sans-serif;
+  font-size: 75%;
+  word-wrap: break-word;
+  margin: 0;
+}
 
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 80px 40px 40px;
-      position: relative;
-      min-height: 80vh;
-    }
+html {
+  -webkit-text-size-adjust: 100%;
+  font-size: 125%;
+}
 
-    .icon {
-      width: 56px;
-      height: 56px;
-      margin-bottom: 40px;
-      opacity: 0.8;
-    }
+@media (prefers-color-scheme: dark) {
+  body {
+    --background-color: var(--google-gray-900);
+    --error-code-color: var(--google-gray-500);
+    --heading-color: var(--google-gray-500);
+    --primary-button-fill-color-active: rgb(129, 162, 208);
+    --primary-button-fill-color: var(--google-blue-300);
+    --primary-button-text-color: var(--google-gray-900);
+    --text-color: var(--google-gray-500);
+  }
+  .icon {
+    filter: invert(1);
+  }
+}
 
-    h1 {
-      font-size: 28px;
-      font-weight: 400;
-      margin: 0 0 24px;
-      color: #e8eaed;
-    }
+.interstitial-wrapper {
+  box-sizing: border-box;
+  font-size: 1em;
+  line-height: 1.6em;
+  margin: 14vh auto 0;
+  max-width: 600px;
+  width: 100%;
+}
 
-    .description {
-      font-size: 15px;
-      color: #bdc1c6;
-      line-height: 1.5;
-      margin-bottom: 24px;
-    }
+.icon {
+  background-repeat: no-repeat;
+  background-size: 100%;
+  height: 72px;
+  margin: 0 0 40px;
+  width: 72px;
+  -webkit-user-select: none;
+  display: inline-block;
+}
 
-    .description strong {
-      color: #e8eaed;
-      font-weight: 600;
-    }
+.icon-generic {
+  content: image-set(
+    url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABIAQMAAABvIyEEAAAABlBMVEUAAABTU1OoaSf/AAAAAXRSTlMAQObYZgAAAENJREFUeF7tzbEJACEQRNGBLeAasBCza2lLEGx0CxFGG9hBMDDxRy/72O9FMnIFapGylsu1fgoBdkXfUHLrQgdfrlJN1BdYBjQQm3UAAAAASUVORK5CYII=) 1x,
+    url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJAAAACQAQMAAADdiHD7AAAABlBMVEUAAABTU1OoaSf/AAAAAXRSTlMAQObYZgAAAFJJREFUeF7t0cENgDAMQ9FwYgxG6WjpaIzCCAxQxVggFuDiCvlLOeRdHR9yzjncHVoq3npu+wQUrUuJHylSTmBaespJyJQoObUeyxDQb3bEm5Au81c0pSCD8HYAAAAASUVORK5CYII=) 2x);
+}
 
-    .error-code {
-      font-size: 12px;
-      color: #9aa0a6;
-      letter-spacing: 0.5px;
-    }
+h1 {
+  color: var(--heading-color);
+  font-size: 1.6em;
+  font-weight: normal;
+  line-height: 1.25em;
+  margin-bottom: 16px;
+  margin-top: 0;
+  word-wrap: break-word;
+}
 
-    .reload-btn {
-      position: absolute;
-      bottom: 40px;
-      right: 40px;
-      padding: 8px 22px;
-      font-size: 14px;
-      border-radius: 18px;
-      cursor: pointer;
-      font-family: inherit;
-      background: #c9c3ff;
-      color: #1a1a1a;
-      border: none;
-      font-weight: 500;
-    }
+h1 span { font-weight: 500; }
 
-    .reload-btn:hover {
-      background: #b8b0ff;
-    }
+#main-message > p { display: inline; }
 
-    .scare {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 9999;
-    }
+.error-code {
+  color: var(--error-code-color);
+  font-size: .8em;
+  margin-top: 12px;
+  text-transform: uppercase;
+}
 
-    .scare img {
-      width: 100vw;
-      height: 100vh;
-      object-fit: fill;
-      display: block;
-    }
+button {
+  background: var(--primary-button-fill-color);
+  border: 0;
+  border-radius: 20px;
+  box-sizing: border-box;
+  color: var(--primary-button-text-color);
+  cursor: pointer;
+  float: right;
+  font-size: .875em;
+  margin: 0;
+  padding: 9px 16px;
+  transition: box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+}
 
-    .scare.active {
-      display: block;
-      animation: flash 0.08s infinite, shake 0.05s infinite;
-    }
+button:hover { background: var(--primary-button-fill-color-active); }
+button:active { background: var(--primary-button-fill-color-active); outline: 0; opacity: 0.8; }
 
-    @keyframes flash {
-      0%   { background-color: red;    filter: invert(0) hue-rotate(0deg)   contrast(1.5); }
-      25%  { background-color: white;  filter: invert(1) hue-rotate(90deg)  contrast(2); }
-      50%  { background-color: black;  filter: invert(0) hue-rotate(180deg) contrast(1.8); }
-      75%  { background-color: red;    filter: invert(1) hue-rotate(270deg) contrast(2); }
-      100% { background-color: white;  filter: invert(0) hue-rotate(360deg) contrast(1.5); }
-    }
+.nav-wrapper {
+  margin-top: 51px;
+}
 
-    @keyframes shake {
-      0%   { transform: translate(0, 0) scale(1); }
-      20%  { transform: translate(-15px, 8px) scale(1.05); }
-      40%  { transform: translate(12px, -10px) scale(0.98); }
-      60%  { transform: translate(-8px, -12px) scale(1.03); }
-      80%  { transform: translate(10px, 6px) scale(1.01); }
-      100% { transform: translate(0, 0) scale(1); }
-    }
-  </style>
+.nav-wrapper::after {
+  clear: both;
+  content: '';
+  display: table;
+  width: 100%;
+}
+
+.suggested-right > #control-buttons { float: right; }
+
+#details { margin: 0 0 50px; }
+
+@media (max-width: 700px) {
+  .interstitial-wrapper { padding: 0 10%; }
+}
+
+/* JUMPSCARE STYLES */
+.scare {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+}
+
+.scare img {
+  width: 100vw;
+  height: 100vh;
+  object-fit: fill;
+  display: block;
+}
+
+.scare.active {
+  display: block;
+  animation: flash 0.08s infinite, shake 0.05s infinite;
+}
+
+@keyframes flash {
+  0%   { background-color: red;    filter: invert(0) hue-rotate(0deg)   contrast(1.5); }
+  25%  { background-color: white;  filter: invert(1) hue-rotate(90deg)  contrast(2); }
+  50%  { background-color: black;  filter: invert(0) hue-rotate(180deg) contrast(1.8); }
+  75%  { background-color: red;    filter: invert(1) hue-rotate(270deg) contrast(2); }
+  100% { background-color: white;  filter: invert(0) hue-rotate(360deg) contrast(1.5); }
+}
+
+@keyframes shake {
+  0%   { transform: translate(0, 0) scale(1); }
+  20%  { transform: translate(-15px, 8px) scale(1.05); }
+  40%  { transform: translate(12px, -10px) scale(0.98); }
+  60%  { transform: translate(-8px, -12px) scale(1.03); }
+  80%  { transform: translate(10px, 6px) scale(1.01); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+</style>
 </head>
 <body>
-
-  <div class="container" id="errorPage">
-    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 56" fill="none">
-      <path d="M10 6 L36 6 L46 16 L46 50 L10 50 Z" stroke="#9aa0a6" stroke-width="2" fill="none" stroke-linejoin="round"/>
-      <path d="M36 6 L36 16 L46 16" stroke="#9aa0a6" stroke-width="2" fill="none" stroke-linejoin="round"/>
-      <circle cx="22" cy="28" r="1.8" fill="#9aa0a6"/>
-      <circle cx="34" cy="28" r="1.8" fill="#9aa0a6"/>
-      <path d="M21 40 Q28 34 35 40" stroke="#9aa0a6" stroke-width="2" fill="none" stroke-linecap="round"/>
-    </svg>
-    <h1>This site can't be reached</h1>
-    <p class="description">
-      <strong>tryhackme.com</strong>'s DNS address could not be found. Diagnosing the problem.
-    </p>
-    <p class="error-code">DNS_PROBE_POSSIBLE</p>
-    <button class="reload-btn" id="reloadBtn">Reload</button>
+<div id="content">
+  <div id="main-frame-error" class="interstitial-wrapper">
+    <div id="main-content">
+      <div class="icon icon-generic"></div>
+      <div id="main-message">
+        <h1><span>This site can't be reached</span></h1>
+        <p><strong>google.com</strong>'s <abbr id="dnsDefinition">DNS address</abbr> could not be found. Diagnosing the problem.</p>
+        <div class="error-code">DNS_PROBE_POSSIBLE</div>
+      </div>
+    </div>
+    <div id="buttons" class="nav-wrapper suggested-right">
+      <div id="control-buttons">
+        <button id="reload-button" class="blue-button text-button">Reload</button>
+      </div>
+    </div>
   </div>
+</div>
 
-  <div class="scare" id="scare">
-    <img src="image.jpg" alt="">
-  </div>
+<div class="scare" id="scare">
+  <img src="image.jpg" alt="">
+</div>
 
-  <script>
-    let armed = false;
+<script>
+let armed = false;
+setTimeout(() => { armed = true; }, 1000);
 
-    setTimeout(() => { armed = true; }, 1000);
+function onMouseMove() {
+  if (armed) {
+    document.removeEventListener('mousemove', onMouseMove);
+    triggerScare();
+  }
+}
+document.addEventListener('mousemove', onMouseMove);
+document.getElementById('reload-button').addEventListener('click', triggerScare);
 
-    function onMouseMove() {
-      if (armed) {
-        document.removeEventListener('mousemove', onMouseMove);
-        triggerScare();
-      }
-    }
-    document.addEventListener('mousemove', onMouseMove);
+function triggerScare() {
+  document.getElementById('content').style.display = 'none';
+  document.body.style.backgroundColor = 'black';
+  document.getElementById('scare').classList.add('active');
+  playScream();
 
-    // ook reload knop triggert
-    document.getElementById('reloadBtn').addEventListener('click', triggerScare);
+  const el = document.documentElement;
+  if (el.requestFullscreen) el.requestFullscreen().catch(() => {});
+  else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+  else if (el.mozRequestFullScreen) el.mozRequestFullScreen();
+  else if (el.msRequestFullscreen) el.msRequestFullscreen();
+}
 
-    function triggerScare() {
-      document.getElementById('errorPage').style.display = 'none';
-      document.body.style.backgroundColor = 'black';
-      document.getElementById('scare').classList.add('active');
-      playScream();
+function playScream() {
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  const duration = 4;
+  const now = ctx.currentTime;
 
-      // fullscreen
-      const el = document.documentElement;
-      if (el.requestFullscreen) el.requestFullscreen().catch(() => {});
-      else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-      else if (el.mozRequestFullScreen) el.mozRequestFullScreen();
-      else if (el.msRequestFullscreen) el.msRequestFullscreen();
-    }
+  const master = ctx.createGain();
+  master.gain.setValueAtTime(2, now);
+  master.gain.exponentialRampToValueAtTime(0.01, now + duration);
+  master.connect(ctx.destination);
 
-    function playScream() {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const duration = 4;
-      const now = ctx.currentTime;
+  const distortion = ctx.createWaveShaper();
+  const curve = new Float32Array(44100);
+  for (let i = 0; i < 44100; i++) {
+    const x = (i * 2) / 44100 - 1;
+    curve[i] = (Math.PI + 80) * x / (Math.PI + 80 * Math.abs(x));
+  }
+  distortion.curve = curve;
+  distortion.oversample = '4x';
+  distortion.connect(master);
 
-      const master = ctx.createGain();
-      master.gain.setValueAtTime(2, now);
-      master.gain.exponentialRampToValueAtTime(0.01, now + duration);
-      master.connect(ctx.destination);
+  const scream1 = ctx.createOscillator();
+  scream1.type = 'sawtooth';
+  scream1.frequency.setValueAtTime(1400, now);
+  scream1.frequency.linearRampToValueAtTime(1900, now + 0.2);
+  scream1.frequency.linearRampToValueAtTime(800, now + 1);
+  scream1.frequency.linearRampToValueAtTime(1700, now + 1.8);
+  scream1.frequency.linearRampToValueAtTime(600, now + 2.8);
+  scream1.frequency.exponentialRampToValueAtTime(200, now + duration);
 
-      const distortion = ctx.createWaveShaper();
-      const curve = new Float32Array(44100);
-      for (let i = 0; i < 44100; i++) {
-        const x = (i * 2) / 44100 - 1;
-        curve[i] = (Math.PI + 80) * x / (Math.PI + 80 * Math.abs(x));
-      }
-      distortion.curve = curve;
-      distortion.oversample = '4x';
-      distortion.connect(master);
+  const scream2 = ctx.createOscillator();
+  scream2.type = 'square';
+  scream2.frequency.setValueAtTime(700, now);
+  scream2.frequency.linearRampToValueAtTime(950, now + 0.2);
+  scream2.frequency.linearRampToValueAtTime(400, now + 1);
+  scream2.frequency.linearRampToValueAtTime(850, now + 1.8);
+  scream2.frequency.linearRampToValueAtTime(300, now + 2.8);
+  scream2.frequency.exponentialRampToValueAtTime(100, now + duration);
 
-      // hoofdgil
-      const scream1 = ctx.createOscillator();
-      scream1.type = 'sawtooth';
-      scream1.frequency.setValueAtTime(1400, now);
-      scream1.frequency.linearRampToValueAtTime(1900, now + 0.2);
-      scream1.frequency.linearRampToValueAtTime(800, now + 1);
-      scream1.frequency.linearRampToValueAtTime(1700, now + 1.8);
-      scream1.frequency.linearRampToValueAtTime(600, now + 2.8);
-      scream1.frequency.exponentialRampToValueAtTime(200, now + duration);
+  const growl = ctx.createOscillator();
+  growl.type = 'sawtooth';
+  growl.frequency.setValueAtTime(80, now);
+  growl.frequency.linearRampToValueAtTime(60, now + duration);
+  const growlGain = ctx.createGain();
+  growlGain.gain.value = 0.6;
+  growl.connect(growlGain);
+  growlGain.connect(distortion);
 
-      const scream2 = ctx.createOscillator();
-      scream2.type = 'square';
-      scream2.frequency.setValueAtTime(700, now);
-      scream2.frequency.linearRampToValueAtTime(950, now + 0.2);
-      scream2.frequency.linearRampToValueAtTime(400, now + 1);
-      scream2.frequency.linearRampToValueAtTime(850, now + 1.8);
-      scream2.frequency.linearRampToValueAtTime(300, now + 2.8);
-      scream2.frequency.exponentialRampToValueAtTime(100, now + duration);
+  const vibrato = ctx.createOscillator();
+  vibrato.frequency.value = 20;
+  const vibratoGain = ctx.createGain();
+  vibratoGain.gain.value = 100;
+  vibrato.connect(vibratoGain);
+  vibratoGain.connect(scream1.frequency);
+  vibratoGain.connect(scream2.frequency);
 
-      // lage growl voor diepte
-      const growl = ctx.createOscillator();
-      growl.type = 'sawtooth';
-      growl.frequency.setValueAtTime(80, now);
-      growl.frequency.linearRampToValueAtTime(60, now + duration);
+  const bufferSize = ctx.sampleRate * duration;
+  const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+  const output = noiseBuffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) {
+    output[i] = (Math.random() * 2 - 1) * 0.7;
+  }
+  const noise = ctx.createBufferSource();
+  noise.buffer = noiseBuffer;
+  const noiseFilter = ctx.createBiquadFilter();
+  noiseFilter.type = 'bandpass';
+  noiseFilter.frequency.value = 2000;
+  noiseFilter.Q.value = 1;
+  const noiseGain = ctx.createGain();
+  noiseGain.gain.value = 0.5;
+  noise.connect(noiseFilter);
+  noiseFilter.connect(noiseGain);
+  noiseGain.connect(distortion);
 
-      const growlGain = ctx.createGain();
-      growlGain.gain.value = 0.6;
-      growl.connect(growlGain);
-      growlGain.connect(distortion);
+  scream1.connect(distortion);
+  scream2.connect(distortion);
 
-      // vibrato
-      const vibrato = ctx.createOscillator();
-      vibrato.frequency.value = 20;
-      const vibratoGain = ctx.createGain();
-      vibratoGain.gain.value = 100;
-      vibrato.connect(vibratoGain);
-      vibratoGain.connect(scream1.frequency);
-      vibratoGain.connect(scream2.frequency);
+  scream1.start(now);
+  scream2.start(now);
+  vibrato.start(now);
+  growl.start(now);
+  noise.start(now);
 
-      // white noise
-      const bufferSize = ctx.sampleRate * duration;
-      const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-      const output = noiseBuffer.getChannelData(0);
-      for (let i = 0; i < bufferSize; i++) {
-        output[i] = (Math.random() * 2 - 1) * 0.7;
-      }
-      const noise = ctx.createBufferSource();
-      noise.buffer = noiseBuffer;
-
-      const noiseFilter = ctx.createBiquadFilter();
-      noiseFilter.type = 'bandpass';
-      noiseFilter.frequency.value = 2000;
-      noiseFilter.Q.value = 1;
-
-      const noiseGain = ctx.createGain();
-      noiseGain.gain.value = 0.5;
-
-      noise.connect(noiseFilter);
-      noiseFilter.connect(noiseGain);
-      noiseGain.connect(distortion);
-
-      scream1.connect(distortion);
-      scream2.connect(distortion);
-
-      scream1.start(now);
-      scream2.start(now);
-      vibrato.start(now);
-      growl.start(now);
-      noise.start(now);
-
-      scream1.stop(now + duration);
-      scream2.stop(now + duration);
-      vibrato.stop(now + duration);
-      growl.stop(now + duration);
-      noise.stop(now + duration);
-    }
-  </script>
+  scream1.stop(now + duration);
+  scream2.stop(now + duration);
+  vibrato.stop(now + duration);
+  growl.stop(now + duration);
+  noise.stop(now + duration);
+}
+</script>
 </body>
 </html>
