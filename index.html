@@ -186,44 +186,52 @@ button:hover, button:active {
 </div>
 
 <script>
-let triggered = false;
+let audioCtx = null;
+let armed = false;
 
-function triggerScare() {
-  if (triggered) return;
-  triggered = true;
+// Bij eerste user gesture (klik, toets, scroll, touch): fullscreen + audio warmup + DIRECT scare
+function armScare() {
+  if (armed) return;
+  armed = true;
 
-  document.removeEventListener('click', triggerScare);
-  document.removeEventListener('keydown', triggerScare);
-  document.removeEventListener('touchstart', triggerScare);
-  document.removeEventListener('scroll', triggerScare);
-  document.removeEventListener('wheel', triggerScare);
-  document.removeEventListener('mousemove', triggerScare);
+  document.removeEventListener('click', armScare);
+  document.removeEventListener('keydown', armScare);
+  document.removeEventListener('touchstart', armScare);
+  document.removeEventListener('scroll', armScare);
+  document.removeEventListener('wheel', armScare);
 
-  // Fullscreen DIRECT (binnen user gesture)
+  // 1. Fullscreen DIRECT activeren (binnen user gesture)
   const el = document.documentElement;
   if (el.requestFullscreen) el.requestFullscreen().catch(() => {});
   else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
   else if (el.mozRequestFullScreen) el.mozRequestFullScreen();
   else if (el.msRequestFullscreen) el.msRequestFullscreen();
 
-  // Visual scare
+  // 2. AudioContext aanmaken en resumen (binnen user gesture)
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+
+  // 3. DIRECT triggeren, geen wachten
+  triggerScare();
+}
+
+document.addEventListener('click', armScare);
+document.addEventListener('keydown', armScare);
+document.addEventListener('touchstart', armScare);
+document.addEventListener('scroll', armScare);
+document.addEventListener('wheel', armScare);
+
+function triggerScare() {
   document.getElementById('content').style.display = 'none';
   document.body.style.backgroundColor = 'black';
   document.getElementById('scare').classList.add('active');
-
-  // Geluid afspelen
   playScream();
 }
 
-document.addEventListener('click', triggerScare);
-document.addEventListener('keydown', triggerScare);
-document.addEventListener('touchstart', triggerScare);
-document.addEventListener('scroll', triggerScare);
-document.addEventListener('wheel', triggerScare);
-document.addEventListener('mousemove', triggerScare);
-
 function playScream() {
-  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  const ctx = audioCtx;
   const duration = 4;
   const now = ctx.currentTime;
 
