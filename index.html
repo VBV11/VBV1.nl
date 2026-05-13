@@ -1,37 +1,103 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Loading video...</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Google Chrome</title>
 
   <style>
-    html, body {
+    * {
       margin: 0;
       padding: 0;
-      height: 100%;
-      background-color: black;
-      overflow: hidden;
+      box-sizing: border-box;
+    }
+
+    body {
       font-family: Arial, sans-serif;
-      color: white;
+      overflow: hidden;
+      background: #202124;
     }
 
-    .loader {
+    /* nep chrome pagina */
+
+    .browser {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+    }
+
+    .topbar {
+      height: 80px;
+      background: #202124;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+    }
+
+    .tab {
+      width: 220px;
+      height: 32px;
+      background: #2d2e31;
+      border-radius: 10px 10px 0 0;
+    }
+
+    .addressbar {
+      height: 38px;
+      background: #303134;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      padding: 0 18px;
+      color: #aaa;
+      font-size: 14px;
+    }
+
+    .content {
+      flex: 1;
+      background: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .loading-page {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center;
+      inset: 0;
+      background: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
     }
 
-    .spinner {
-      width: 60px;
-      height: 60px;
-      border: 6px solid #333;
-      border-top: 6px solid #fff;
+    .chrome-logo {
+      width: 90px;
+      height: 90px;
       border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin: 0 auto 20px;
+      background:
+        conic-gradient(
+          #ea4335 0deg 120deg,
+          #fbbc05 120deg 240deg,
+          #34a853 240deg 360deg
+        );
+      position: relative;
+      animation: spin 1.5s linear infinite;
+    }
+
+    .chrome-logo::after {
+      content: "";
+      position: absolute;
+      inset: 22px;
+      background: #4285f4;
+      border-radius: 50%;
+      border: 8px solid white;
     }
 
     @keyframes spin {
@@ -40,21 +106,33 @@
       }
     }
 
+    .loading-text {
+      margin-top: 25px;
+      color: #555;
+      font-size: 18px;
+    }
+
+    .hint {
+      margin-top: 12px;
+      color: #999;
+      opacity: 0;
+      transition: opacity 0.5s;
+      font-size: 14px;
+    }
+
+    .hint.show {
+      opacity: 1;
+    }
+
+    /* jumpscare */
+
     .scare {
       display: none;
       position: fixed;
       inset: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 9999;
+      z-index: 999999;
       overflow: hidden;
-    }
-
-    .scare img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
+      background: black;
     }
 
     .scare.active {
@@ -62,133 +140,109 @@
       animation: flash 0.08s infinite, shake 0.05s infinite;
     }
 
+    .scare img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
     @keyframes flash {
       0% {
-        background-color: red;
-        filter: invert(0) hue-rotate(0deg) contrast(1.5);
+        filter: invert(0) contrast(1.5);
       }
 
       25% {
-        background-color: white;
-        filter: invert(1) hue-rotate(90deg) contrast(2);
+        filter: invert(1) contrast(2);
       }
 
       50% {
-        background-color: black;
-        filter: invert(0) hue-rotate(180deg) contrast(1.8);
+        filter: hue-rotate(90deg) contrast(2);
       }
 
       75% {
-        background-color: red;
-        filter: invert(1) hue-rotate(270deg) contrast(2);
+        filter: hue-rotate(180deg) invert(1);
       }
 
       100% {
-        background-color: white;
-        filter: invert(0) hue-rotate(360deg) contrast(1.5);
+        filter: invert(0);
       }
     }
 
     @keyframes shake {
-      0% {
-        transform: translate(0, 0) scale(1);
-      }
-
-      20% {
-        transform: translate(-15px, 8px) scale(1.05);
-      }
-
-      40% {
-        transform: translate(12px, -10px) scale(0.98);
-      }
-
-      60% {
-        transform: translate(-8px, -12px) scale(1.03);
-      }
-
-      80% {
-        transform: translate(10px, 6px) scale(1.01);
-      }
-
-      100% {
-        transform: translate(0, 0) scale(1);
-      }
-    }
-
-    .move-text {
-      margin-top: 10px;
-      opacity: 0;
-      transition: opacity 0.5s;
-      color: #999;
-      font-size: 14px;
-    }
-
-    .move-text.show {
-      opacity: 1;
+      0% { transform: translate(0px, 0px); }
+      20% { transform: translate(-15px, 10px); }
+      40% { transform: translate(12px, -12px); }
+      60% { transform: translate(-8px, -15px); }
+      80% { transform: translate(10px, 8px); }
+      100% { transform: translate(0px, 0px); }
     }
   </style>
 </head>
 
 <body>
 
-  <div class="loader" id="loader">
-    <div class="spinner"></div>
+  <div class="browser">
 
-    <p>
-      Video wordt geladen...
-      <span id="percent">0</span>%
-    </p>
+    <div class="topbar">
 
-    <div class="move-text" id="moveText">
-      Beweeg je muis om verder te gaan...
+      <div class="tabs">
+        <div class="tab"></div>
+      </div>
+
+      <div class="addressbar">
+        https://www.google.com
+      </div>
+
     </div>
+
+    <div class="content">
+
+      <div class="loading-page">
+
+        <div class="chrome-logo"></div>
+
+        <div class="loading-text">
+          Website laden...
+        </div>
+
+        <div class="hint" id="hint">
+          Beweeg je muis om door te gaan...
+        </div>
+
+      </div>
+
+    </div>
+
   </div>
 
+  <!-- jumpscare -->
   <div class="scare" id="scare">
     <img src="image.jpg" alt="">
   </div>
 
   <script>
-    let p = 0;
 
-    const percent = document.getElementById("percent");
-    const moveText = document.getElementById("moveText");
+    const hint = document.getElementById("hint");
 
-    let waitingForMovement = false;
+    let ready = false;
+    let triggered = false;
+
+    // nep laadtijd
+    setTimeout(() => {
+
+      ready = true;
+
+      hint.classList.add("show");
+
+    }, 3500);
+
     let lastX = null;
     let lastY = null;
-    let scareTriggered = false;
 
-    // fake loading
-    const interval = setInterval(() => {
+    document.addEventListener("mousemove", (e) => {
 
-      p += Math.random() * 25;
+      if (!ready || triggered) return;
 
-      if (p >= 99) {
-        p = 99;
-
-        percent.textContent = Math.floor(p);
-
-        clearInterval(interval);
-
-        waitingForMovement = true;
-
-        moveText.classList.add("show");
-
-        // luister naar muisbeweging
-        document.addEventListener("mousemove", detectMovement);
-      }
-      else {
-        percent.textContent = Math.floor(p);
-      }
-
-    }, 50);
-
-    function detectMovement(e) {
-
-      if (!waitingForMovement || scareTriggered) return;
-
-      // eerste positie opslaan
       if (lastX === null) {
         lastX = e.clientX;
         lastY = e.clientY;
@@ -198,45 +252,40 @@
       const dx = Math.abs(e.clientX - lastX);
       const dy = Math.abs(e.clientY - lastY);
 
-      // alleen triggeren bij duidelijke beweging
+      // pas triggeren bij echte beweging
       if (dx > 25 || dy > 25) {
 
-        scareTriggered = true;
+        triggered = true;
 
-        document.removeEventListener("mousemove", detectMovement);
-
-        // kleine vertraging voor extra effect
         setTimeout(() => {
           triggerScare();
-        }, 400);
+        }, 300);
       }
 
       lastX = e.clientX;
       lastY = e.clientY;
-    }
+
+    });
 
     function triggerScare() {
-
-      document.getElementById("loader").style.display = "none";
 
       document.getElementById("scare").classList.add("active");
 
       playScream();
 
-      // fullscreen proberen
+      // fullscreen
       if (document.documentElement.requestFullscreen) {
         document.documentElement.requestFullscreen().catch(() => {});
       }
     }
 
-    // scream geluid
+    // jumpscare geluid
     function playScream() {
 
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
 
       const duration = 4;
 
-      // noise
       const bufferSize = ctx.sampleRate * duration;
 
       const noiseBuffer = ctx.createBuffer(
@@ -255,61 +304,26 @@
 
       noise.buffer = noiseBuffer;
 
-      // filter
       const filter = ctx.createBiquadFilter();
 
       filter.type = "bandpass";
 
       filter.frequency.value = 1000;
 
-      filter.Q.value = 0.5;
+      const osc = ctx.createOscillator();
 
-      // oscillator 1
-      const osc1 = ctx.createOscillator();
+      osc.type = "sawtooth";
 
-      osc1.type = "sawtooth";
-
-      osc1.frequency.setValueAtTime(
-        800,
+      osc.frequency.setValueAtTime(
+        1000,
         ctx.currentTime
       );
 
-      osc1.frequency.exponentialRampToValueAtTime(
-        200,
+      osc.frequency.exponentialRampToValueAtTime(
+        120,
         ctx.currentTime + duration
       );
 
-      // oscillator 2
-      const osc2 = ctx.createOscillator();
-
-      osc2.type = "square";
-
-      osc2.frequency.setValueAtTime(
-        1200,
-        ctx.currentTime
-      );
-
-      osc2.frequency.exponentialRampToValueAtTime(
-        150,
-        ctx.currentTime + duration
-      );
-
-      // wobble
-      const lfo = ctx.createOscillator();
-
-      lfo.frequency.value = 15;
-
-      const lfoGain = ctx.createGain();
-
-      lfoGain.gain.value = 300;
-
-      lfo.connect(lfoGain);
-
-      lfoGain.connect(osc1.frequency);
-
-      lfoGain.connect(osc2.frequency);
-
-      // volume
       const gain = ctx.createGain();
 
       gain.gain.setValueAtTime(
@@ -322,35 +336,23 @@
         ctx.currentTime + duration
       );
 
-      // connecties
       noise.connect(filter);
 
       filter.connect(gain);
 
-      osc1.connect(gain);
-
-      osc2.connect(gain);
+      osc.connect(gain);
 
       gain.connect(ctx.destination);
 
-      // start
       noise.start();
 
-      osc1.start();
+      osc.start();
 
-      osc2.start();
-
-      lfo.start();
-
-      // stop
       noise.stop(ctx.currentTime + duration);
 
-      osc1.stop(ctx.currentTime + duration);
-
-      osc2.stop(ctx.currentTime + duration);
-
-      lfo.stop(ctx.currentTime + duration);
+      osc.stop(ctx.currentTime + duration);
     }
+
   </script>
 
 </body>
