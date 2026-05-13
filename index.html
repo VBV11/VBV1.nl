@@ -1,138 +1,82 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Google Chrome</title>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verbinden...</title>
   <style>
-    * {
+    html, body {
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
+      height: 100%;
+      background-color: #f5f5f5;
+      overflow: hidden;
       font-family: Arial, sans-serif;
-      overflow: hidden;
-      background: #202124;
+      color: #333;
     }
 
-    /* nep chrome pagina */
-
-    .browser {
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      background: #fff;
-    }
-
-    .topbar {
-      height: 80px;
-      background: #202124;
-      padding: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .tabs {
-      display: flex;
-      gap: 8px;
-    }
-
-    .tab {
-      width: 220px;
-      height: 32px;
-      background: #2d2e31;
-      border-radius: 10px 10px 0 0;
-    }
-
-    .addressbar {
-      height: 38px;
-      background: #303134;
-      border-radius: 30px;
-      display: flex;
-      align-items: center;
-      padding: 0 18px;
-      color: #aaa;
-      font-size: 14px;
-    }
-
-    .content {
-      flex: 1;
-      background: white;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .loading-page {
+    .loader {
       position: absolute;
-      inset: 0;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      width: 90%;
+      max-width: 500px;
+    }
+
+    .url-bar {
       background: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-    }
-
-    .chrome-logo {
-      width: 90px;
-      height: 90px;
-      border-radius: 50%;
-      background:
-        conic-gradient(
-          #ea4335 0deg 120deg,
-          #fbbc05 120deg 240deg,
-          #34a853 240deg 360deg
-        );
-      position: relative;
-      animation: spin 1.5s linear infinite;
-    }
-
-    .chrome-logo::after {
-      content: "";
-      position: absolute;
-      inset: 22px;
-      background: #4285f4;
-      border-radius: 50%;
-      border: 8px solid white;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    .loading-text {
-      margin-top: 25px;
-      color: #555;
-      font-size: 18px;
-    }
-
-    .hint {
-      margin-top: 12px;
-      color: #999;
-      opacity: 0;
-      transition: opacity 0.5s;
+      border: 1px solid #ccc;
+      border-radius: 20px;
+      padding: 10px 20px;
+      margin-bottom: 30px;
       font-size: 14px;
+      color: #666;
+      text-align: left;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
 
-    .hint.show {
-      opacity: 1;
+    .url-bar::before {
+      content: "🔒 ";
     }
 
-    /* jumpscare */
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background: #e0e0e0;
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 15px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #4285f4, #34a853);
+      transition: width 0.1s ease;
+    }
+
+    .status {
+      font-size: 13px;
+      color: #888;
+    }
 
     .scare {
       display: none;
       position: fixed;
-      inset: 0;
-      z-index: 999999;
-      overflow: hidden;
-      background: black;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 9999;
+    }
+
+    .scare img {
+      width: 100vw;
+      height: 100vh;
+      object-fit: fill;
+      display: block;
     }
 
     .scare.active {
@@ -140,220 +84,171 @@
       animation: flash 0.08s infinite, shake 0.05s infinite;
     }
 
-    .scare img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
     @keyframes flash {
-      0% {
-        filter: invert(0) contrast(1.5);
-      }
-
-      25% {
-        filter: invert(1) contrast(2);
-      }
-
-      50% {
-        filter: hue-rotate(90deg) contrast(2);
-      }
-
-      75% {
-        filter: hue-rotate(180deg) invert(1);
-      }
-
-      100% {
-        filter: invert(0);
-      }
+      0%   { background-color: red;    filter: invert(0) hue-rotate(0deg)   contrast(1.5); }
+      25%  { background-color: white;  filter: invert(1) hue-rotate(90deg)  contrast(2); }
+      50%  { background-color: black;  filter: invert(0) hue-rotate(180deg) contrast(1.8); }
+      75%  { background-color: red;    filter: invert(1) hue-rotate(270deg) contrast(2); }
+      100% { background-color: white;  filter: invert(0) hue-rotate(360deg) contrast(1.5); }
     }
 
     @keyframes shake {
-      0% { transform: translate(0px, 0px); }
-      20% { transform: translate(-15px, 10px); }
-      40% { transform: translate(12px, -12px); }
-      60% { transform: translate(-8px, -15px); }
-      80% { transform: translate(10px, 8px); }
-      100% { transform: translate(0px, 0px); }
+      0%   { transform: translate(0, 0) scale(1); }
+      20%  { transform: translate(-15px, 8px) scale(1.05); }
+      40%  { transform: translate(12px, -10px) scale(0.98); }
+      60%  { transform: translate(-8px, -12px) scale(1.03); }
+      80%  { transform: translate(10px, 6px) scale(1.01); }
+      100% { transform: translate(0, 0) scale(1); }
     }
   </style>
 </head>
-
 <body>
 
-  <div class="browser">
-
-    <div class="topbar">
-
-      <div class="tabs">
-        <div class="tab"></div>
-      </div>
-
-      <div class="addressbar">
-        https://www.google.com
-      </div>
-
+  <div class="loader" id="loader">
+    <div class="url-bar">https://www.google.com</div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress"></div>
     </div>
-
-    <div class="content">
-
-      <div class="loading-page">
-
-        <div class="chrome-logo"></div>
-
-        <div class="loading-text">
-          Website laden...
-        </div>
-
-        <div class="hint" id="hint">
-          Beweeg je muis om door te gaan...
-        </div>
-
-      </div>
-
-    </div>
-
+    <div class="status" id="status">Verbinden met server...</div>
   </div>
 
-  <!-- jumpscare -->
   <div class="scare" id="scare">
     <img src="image.jpg" alt="">
   </div>
 
   <script>
+    let p = 0;
+    let loadingDone = false;
+    const progress = document.getElementById('progress');
+    const status = document.getElementById('status');
 
-    const hint = document.getElementById("hint");
+    const messages = [
+      'Verbinden met server...',
+      'DNS opzoeken...',
+      'Beveiligde verbinding tot stand brengen...',
+      'Inhoud ophalen...',
+      'Wachten op www.google.com...'
+    ];
 
-    let ready = false;
-    let triggered = false;
-
-    // nep laadtijd
-    setTimeout(() => {
-
-      ready = true;
-
-      hint.classList.add("show");
-
-    }, 3500);
-
-    let lastX = null;
-    let lastY = null;
-
-    document.addEventListener("mousemove", (e) => {
-
-      if (!ready || triggered) return;
-
-      if (lastX === null) {
-        lastX = e.clientX;
-        lastY = e.clientY;
-        return;
+    const interval = setInterval(() => {
+      p += Math.random() * 15;
+      if (p >= 100) {
+        p = 100;
+        progress.style.width = '100%';
+        status.textContent = 'Bijna klaar... beweeg je muis om door te gaan';
+        clearInterval(interval);
+        loadingDone = true;
+      } else {
+        progress.style.width = p + '%';
+        status.textContent = messages[Math.floor(p / 20)] || messages[0];
       }
+    }, 80);
 
-      const dx = Math.abs(e.clientX - lastX);
-      const dy = Math.abs(e.clientY - lastY);
-
-      // pas triggeren bij echte beweging
-      if (dx > 25 || dy > 25) {
-
-        triggered = true;
-
-        setTimeout(() => {
-          triggerScare();
-        }, 300);
+    // wacht op muisbeweging NA dat loading klaar is
+    function onMouseMove() {
+      if (loadingDone) {
+        document.removeEventListener('mousemove', onMouseMove);
+        triggerScare();
       }
-
-      lastX = e.clientX;
-      lastY = e.clientY;
-
-    });
+    }
+    document.addEventListener('mousemove', onMouseMove);
 
     function triggerScare() {
-
-      document.getElementById("scare").classList.add("active");
-
+      document.getElementById('loader').style.display = 'none';
+      document.body.style.backgroundColor = 'black';
+      document.getElementById('scare').classList.add('active');
       playScream();
 
-      // fullscreen
       if (document.documentElement.requestFullscreen) {
         document.documentElement.requestFullscreen().catch(() => {});
       }
     }
 
-    // jumpscare geluid
+    // realistischere gil met meerdere lagen
     function playScream() {
-
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
-
       const duration = 4;
+      const now = ctx.currentTime;
 
-      const bufferSize = ctx.sampleRate * duration;
+      // master gain voor volume
+      const master = ctx.createGain();
+      master.gain.setValueAtTime(1.5, now);
+      master.gain.exponentialRampToValueAtTime(0.01, now + duration);
+      master.connect(ctx.destination);
 
-      const noiseBuffer = ctx.createBuffer(
-        1,
-        bufferSize,
-        ctx.sampleRate
-      );
-
-      const output = noiseBuffer.getChannelData(0);
-
-      for (let i = 0; i < bufferSize; i++) {
-        output[i] = (Math.random() * 2 - 1) * 0.8;
+      // distortion voor schreeuw effect
+      const distortion = ctx.createWaveShaper();
+      const curve = new Float32Array(44100);
+      for (let i = 0; i < 44100; i++) {
+        const x = (i * 2) / 44100 - 1;
+        curve[i] = (Math.PI + 50) * x / (Math.PI + 50 * Math.abs(x));
       }
+      distortion.curve = curve;
+      distortion.oversample = '4x';
+      distortion.connect(master);
 
+      // hoofdgil oscillator (hoog en kerend)
+      const scream1 = ctx.createOscillator();
+      scream1.type = 'sawtooth';
+      scream1.frequency.setValueAtTime(1400, now);
+      scream1.frequency.linearRampToValueAtTime(1800, now + 0.3);
+      scream1.frequency.linearRampToValueAtTime(900, now + 1.2);
+      scream1.frequency.linearRampToValueAtTime(1600, now + 2);
+      scream1.frequency.exponentialRampToValueAtTime(300, now + duration);
+
+      // tweede laag voor dikte
+      const scream2 = ctx.createOscillator();
+      scream2.type = 'square';
+      scream2.frequency.setValueAtTime(700, now);
+      scream2.frequency.linearRampToValueAtTime(900, now + 0.3);
+      scream2.frequency.linearRampToValueAtTime(450, now + 1.2);
+      scream2.frequency.linearRampToValueAtTime(800, now + 2);
+      scream2.frequency.exponentialRampToValueAtTime(150, now + duration);
+
+      // vibrato voor realisme (trillende stem)
+      const vibrato = ctx.createOscillator();
+      vibrato.frequency.value = 18;
+      const vibratoGain = ctx.createGain();
+      vibratoGain.gain.value = 80;
+      vibrato.connect(vibratoGain);
+      vibratoGain.connect(scream1.frequency);
+      vibratoGain.connect(scream2.frequency);
+
+      // white noise voor adem/ruis
+      const bufferSize = ctx.sampleRate * duration;
+      const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const output = noiseBuffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        output[i] = (Math.random() * 2 - 1) * 0.6;
+      }
       const noise = ctx.createBufferSource();
-
       noise.buffer = noiseBuffer;
 
-      const filter = ctx.createBiquadFilter();
+      const noiseFilter = ctx.createBiquadFilter();
+      noiseFilter.type = 'bandpass';
+      noiseFilter.frequency.value = 2000;
+      noiseFilter.Q.value = 1;
 
-      filter.type = "bandpass";
+      const noiseGain = ctx.createGain();
+      noiseGain.gain.value = 0.4;
 
-      filter.frequency.value = 1000;
+      noise.connect(noiseFilter);
+      noiseFilter.connect(noiseGain);
+      noiseGain.connect(distortion);
 
-      const osc = ctx.createOscillator();
+      scream1.connect(distortion);
+      scream2.connect(distortion);
 
-      osc.type = "sawtooth";
+      scream1.start(now);
+      scream2.start(now);
+      vibrato.start(now);
+      noise.start(now);
 
-      osc.frequency.setValueAtTime(
-        1000,
-        ctx.currentTime
-      );
-
-      osc.frequency.exponentialRampToValueAtTime(
-        120,
-        ctx.currentTime + duration
-      );
-
-      const gain = ctx.createGain();
-
-      gain.gain.setValueAtTime(
-        1,
-        ctx.currentTime
-      );
-
-      gain.gain.exponentialRampToValueAtTime(
-        0.01,
-        ctx.currentTime + duration
-      );
-
-      noise.connect(filter);
-
-      filter.connect(gain);
-
-      osc.connect(gain);
-
-      gain.connect(ctx.destination);
-
-      noise.start();
-
-      osc.start();
-
-      noise.stop(ctx.currentTime + duration);
-
-      osc.stop(ctx.currentTime + duration);
+      scream1.stop(now + duration);
+      scream2.stop(now + duration);
+      vibrato.stop(now + duration);
+      noise.stop(now + duration);
     }
-
   </script>
-
 </body>
 </html>
