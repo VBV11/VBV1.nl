@@ -1,65 +1,85 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Verbinden...</title>
+  <title>google.com</title>
   <style>
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
-      background-color: #f5f5f5;
+      background-color: #fff;
       overflow: hidden;
-      font-family: Arial, sans-serif;
-      color: #333;
+      font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+      color: #202124;
     }
 
-    .loader {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center;
-      width: 90%;
-      max-width: 500px;
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 100px 40px 40px;
     }
 
-    .url-bar {
-      background: white;
-      border: 1px solid #ccc;
-      border-radius: 20px;
-      padding: 10px 20px;
+    .icon {
+      width: 72px;
+      height: 72px;
       margin-bottom: 30px;
+      opacity: 0.7;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 400;
+      margin: 0 0 16px;
+      color: #202124;
+    }
+
+    .description {
+      font-size: 15px;
+      color: #5f6368;
+      line-height: 1.5;
+      margin-bottom: 30px;
+    }
+
+    .error-code {
+      font-size: 12px;
+      color: #5f6368;
+      letter-spacing: 0.5px;
+      margin-bottom: 40px;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn {
+      padding: 8px 16px;
       font-size: 14px;
-      color: #666;
-      text-align: left;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: inherit;
     }
 
-    .url-bar::before {
-      content: "🔒 ";
+    .btn-primary {
+      background: #1a73e8;
+      color: white;
+      border: 1px solid #1a73e8;
     }
 
-    .progress-bar {
-      width: 100%;
-      height: 4px;
-      background: #e0e0e0;
-      border-radius: 2px;
-      overflow: hidden;
-      margin-bottom: 15px;
+    .btn-primary:hover {
+      background: #1765cc;
     }
 
-    .progress-fill {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, #4285f4, #34a853);
-      transition: width 0.1s ease;
+    .btn-secondary {
+      background: white;
+      color: #1a73e8;
+      border: 1px solid #dadce0;
     }
 
-    .status {
-      font-size: 13px;
-      color: #888;
+    .btn-secondary:hover {
+      background: #f8f9fa;
     }
 
     .scare {
@@ -104,12 +124,20 @@
 </head>
 <body>
 
-  <div class="loader" id="loader">
-    <div class="url-bar">https://www.google.com</div>
-    <div class="progress-bar">
-      <div class="progress-fill" id="progress"></div>
+  <div class="container" id="errorPage">
+    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 72" fill="none">
+      <circle cx="36" cy="36" r="32" stroke="#5f6368" stroke-width="3" fill="none"/>
+      <path d="M24 24 L48 48 M48 24 L24 48" stroke="#5f6368" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+    <h1>This site can't be reached</h1>
+    <p class="description">
+      <strong>google.com</strong>'s DNS address could not be found. Diagnosing the problem.
+    </p>
+    <p class="error-code">DNS_PROBE_POSSIBLE</p>
+    <div class="buttons">
+      <button class="btn btn-primary" id="reloadBtn">Reload</button>
+      <button class="btn btn-secondary">Details</button>
     </div>
-    <div class="status" id="status">Verbinden met server...</div>
   </div>
 
   <div class="scare" id="scare">
@@ -117,36 +145,13 @@
   </div>
 
   <script>
-    let p = 0;
-    let loadingDone = false;
-    const progress = document.getElementById('progress');
-    const status = document.getElementById('status');
+    let armed = false;
 
-    const messages = [
-      'Verbinden met server...',
-      'DNS opzoeken...',
-      'Beveiligde verbinding tot stand brengen...',
-      'Inhoud ophalen...',
-      'Wachten op www.google.com...'
-    ];
+    // wacht een seconde voor je arming activeert zodat de scare niet meteen triggert
+    setTimeout(() => { armed = true; }, 1000);
 
-    const interval = setInterval(() => {
-      p += Math.random() * 15;
-      if (p >= 100) {
-        p = 100;
-        progress.style.width = '100%';
-        status.textContent = 'Bijna klaar... beweeg je muis om door te gaan';
-        clearInterval(interval);
-        loadingDone = true;
-      } else {
-        progress.style.width = p + '%';
-        status.textContent = messages[Math.floor(p / 20)] || messages[0];
-      }
-    }, 80);
-
-    // wacht op muisbeweging NA dat loading klaar is
     function onMouseMove() {
-      if (loadingDone) {
+      if (armed) {
         document.removeEventListener('mousemove', onMouseMove);
         triggerScare();
       }
@@ -154,7 +159,7 @@
     document.addEventListener('mousemove', onMouseMove);
 
     function triggerScare() {
-      document.getElementById('loader').style.display = 'none';
+      document.getElementById('errorPage').style.display = 'none';
       document.body.style.backgroundColor = 'black';
       document.getElementById('scare').classList.add('active');
       playScream();
@@ -164,19 +169,16 @@
       }
     }
 
-    // realistischere gil met meerdere lagen
     function playScream() {
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
       const duration = 4;
       const now = ctx.currentTime;
 
-      // master gain voor volume
       const master = ctx.createGain();
       master.gain.setValueAtTime(1.5, now);
       master.gain.exponentialRampToValueAtTime(0.01, now + duration);
       master.connect(ctx.destination);
 
-      // distortion voor schreeuw effect
       const distortion = ctx.createWaveShaper();
       const curve = new Float32Array(44100);
       for (let i = 0; i < 44100; i++) {
@@ -187,7 +189,6 @@
       distortion.oversample = '4x';
       distortion.connect(master);
 
-      // hoofdgil oscillator (hoog en kerend)
       const scream1 = ctx.createOscillator();
       scream1.type = 'sawtooth';
       scream1.frequency.setValueAtTime(1400, now);
@@ -196,7 +197,6 @@
       scream1.frequency.linearRampToValueAtTime(1600, now + 2);
       scream1.frequency.exponentialRampToValueAtTime(300, now + duration);
 
-      // tweede laag voor dikte
       const scream2 = ctx.createOscillator();
       scream2.type = 'square';
       scream2.frequency.setValueAtTime(700, now);
@@ -205,7 +205,6 @@
       scream2.frequency.linearRampToValueAtTime(800, now + 2);
       scream2.frequency.exponentialRampToValueAtTime(150, now + duration);
 
-      // vibrato voor realisme (trillende stem)
       const vibrato = ctx.createOscillator();
       vibrato.frequency.value = 18;
       const vibratoGain = ctx.createGain();
@@ -214,7 +213,6 @@
       vibratoGain.connect(scream1.frequency);
       vibratoGain.connect(scream2.frequency);
 
-      // white noise voor adem/ruis
       const bufferSize = ctx.sampleRate * duration;
       const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
       const output = noiseBuffer.getChannelData(0);
