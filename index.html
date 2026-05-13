@@ -118,7 +118,6 @@ button:hover, button:active {
 
 .suggested-right > #control-buttons { float: right; }
 
-/* === RESPONSIVE: tablet === */
 @media (max-width: 700px) {
   .interstitial-wrapper {
     padding: 0 10%;
@@ -126,7 +125,6 @@ button:hover, button:active {
   }
 }
 
-/* === RESPONSIVE: telefoon === */
 @media (max-width: 420px) {
   html { font-size: 100%; }
   body { font-size: 87.5%; }
@@ -153,17 +151,10 @@ button:hover, button:active {
     width: 100%;
   }
 
-  .icon {
-    margin-bottom: 5.69vh;
-  }
-
-  h1 {
-    font-size: 1.5em;
-    margin-bottom: 8px;
-  }
+  .icon { margin-bottom: 5.69vh; }
+  h1 { font-size: 1.5em; margin-bottom: 8px; }
 }
 
-/* === RESPONSIVE: fixed nav voor smalle/lage schermen === */
 @media (min-width: 240px) and (max-width: 420px) and (min-height: 401px),
        (min-width: 421px) and (min-height: 240px) and (max-height: 560px) {
   body .nav-wrapper {
@@ -226,7 +217,6 @@ button:hover, button:active {
   20%  { transform: translate(-15px, 8px) scale(1.05); }
   40%  { transform: translate(12px, -10px) scale(0.98); }
   60%  { transform: translate(-8px, -12px) scale(1.03); }
-  60%  { transform: translate(-8px, -12px) scale(1.03); }
   80%  { transform: translate(10px, 6px) scale(1.01); }
   100% { transform: translate(0, 0) scale(1); }
 }
@@ -259,17 +249,14 @@ button:hover, button:active {
 let audioCtx = null;
 let armed = false;
 
-// Alleen muis + touch (geen keyboard meer)
+// Alleen klik/tap: geen mousemove, geen scroll, geen wheel, geen keyboard
 function armScare() {
   if (armed) return;
   armed = true;
 
   document.removeEventListener('click', armScare);
   document.removeEventListener('mousedown', armScare);
-  document.removeEventListener('mousemove', armScare);
   document.removeEventListener('touchstart', armScare);
-  document.removeEventListener('scroll', armScare);
-  document.removeEventListener('wheel', armScare);
 
   // 1. Fullscreen DIRECT (binnen user gesture)
   const el = document.documentElement;
@@ -290,10 +277,7 @@ function armScare() {
 
 document.addEventListener('click', armScare);
 document.addEventListener('mousedown', armScare);
-document.addEventListener('mousemove', armScare);
 document.addEventListener('touchstart', armScare);
-document.addEventListener('scroll', armScare);
-document.addEventListener('wheel', armScare);
 
 function triggerScare() {
   document.getElementById('content').style.display = 'none';
