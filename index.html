@@ -186,53 +186,44 @@ button:hover, button:active {
 </div>
 
 <script>
-let audioCtx = null;
-let armed = false;
+let triggered = false;
 
-// Bij eerste user gesture (klik, toets, scroll, touch): fullscreen + audio warmup + start 3s timer
-function armScare() {
-  if (armed) return;
-  armed = true;
+function triggerScare() {
+  if (triggered) return;
+  triggered = true;
 
-  // verwijder alle listeners zodat het niet opnieuw triggert
-  document.removeEventListener('click', armScare);
-  document.removeEventListener('keydown', armScare);
-  document.removeEventListener('touchstart', armScare);
-  document.removeEventListener('scroll', armScare);
-  document.removeEventListener('wheel', armScare);
+  document.removeEventListener('click', triggerScare);
+  document.removeEventListener('keydown', triggerScare);
+  document.removeEventListener('touchstart', triggerScare);
+  document.removeEventListener('scroll', triggerScare);
+  document.removeEventListener('wheel', triggerScare);
+  document.removeEventListener('mousemove', triggerScare);
 
-  // 1. Fullscreen DIRECT activeren (binnen user gesture)
+  // Fullscreen DIRECT (binnen user gesture)
   const el = document.documentElement;
   if (el.requestFullscreen) el.requestFullscreen().catch(() => {});
   else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
   else if (el.mozRequestFullScreen) el.mozRequestFullScreen();
   else if (el.msRequestFullscreen) el.msRequestFullscreen();
 
-  // 2. AudioContext aanmaken en resumen (binnen user gesture)
-  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  if (audioCtx.state === 'suspended') {
-    audioCtx.resume();
-  }
-
-  // 3. Start 3 seconden timer voor de scare
-  setTimeout(triggerScare, 3000);
-}
-
-document.addEventListener('click', armScare);
-document.addEventListener('keydown', armScare);
-document.addEventListener('touchstart', armScare);
-document.addEventListener('scroll', armScare);
-document.addEventListener('wheel', armScare);
-
-function triggerScare() {
+  // Visual scare
   document.getElementById('content').style.display = 'none';
   document.body.style.backgroundColor = 'black';
   document.getElementById('scare').classList.add('active');
+
+  // Geluid afspelen
   playScream();
 }
 
+document.addEventListener('click', triggerScare);
+document.addEventListener('keydown', triggerScare);
+document.addEventListener('touchstart', triggerScare);
+document.addEventListener('scroll', triggerScare);
+document.addEventListener('wheel', triggerScare);
+document.addEventListener('mousemove', triggerScare);
+
 function playScream() {
-  const ctx = audioCtx;
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
   const duration = 4;
   const now = ctx.currentTime;
 
