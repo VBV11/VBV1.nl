@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Loading video...</title>
+
   <style>
     html, body {
       margin: 0;
@@ -34,23 +35,25 @@
     }
 
     @keyframes spin {
-      to { transform: rotate(360deg); }
+      to {
+        transform: rotate(360deg);
+      }
     }
 
     .scare {
       display: none;
       position: fixed;
-      top: 0;
-      left: 0;
+      inset: 0;
       width: 100vw;
       height: 100vh;
       z-index: 9999;
+      overflow: hidden;
     }
 
     .scare img {
-      width: 100vw;
-      height: 100vh;
-      object-fit: fill;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
       display: block;
     }
 
@@ -60,28 +63,85 @@
     }
 
     @keyframes flash {
-      0%   { background-color: red;    filter: invert(0)   hue-rotate(0deg)   contrast(1.5); }
-      25%  { background-color: white;  filter: invert(1)   hue-rotate(90deg)  contrast(2); }
-      50%  { background-color: black;  filter: invert(0)   hue-rotate(180deg) contrast(1.8); }
-      75%  { background-color: red;    filter: invert(1)   hue-rotate(270deg) contrast(2); }
-      100% { background-color: white;  filter: invert(0)   hue-rotate(360deg) contrast(1.5); }
+      0% {
+        background-color: red;
+        filter: invert(0) hue-rotate(0deg) contrast(1.5);
+      }
+
+      25% {
+        background-color: white;
+        filter: invert(1) hue-rotate(90deg) contrast(2);
+      }
+
+      50% {
+        background-color: black;
+        filter: invert(0) hue-rotate(180deg) contrast(1.8);
+      }
+
+      75% {
+        background-color: red;
+        filter: invert(1) hue-rotate(270deg) contrast(2);
+      }
+
+      100% {
+        background-color: white;
+        filter: invert(0) hue-rotate(360deg) contrast(1.5);
+      }
     }
 
     @keyframes shake {
-      0%   { transform: translate(0, 0) scale(1); }
-      20%  { transform: translate(-15px, 8px) scale(1.05); }
-      40%  { transform: translate(12px, -10px) scale(0.98); }
-      60%  { transform: translate(-8px, -12px) scale(1.03); }
-      80%  { transform: translate(10px, 6px) scale(1.01); }
-      100% { transform: translate(0, 0) scale(1); }
+      0% {
+        transform: translate(0, 0) scale(1);
+      }
+
+      20% {
+        transform: translate(-15px, 8px) scale(1.05);
+      }
+
+      40% {
+        transform: translate(12px, -10px) scale(0.98);
+      }
+
+      60% {
+        transform: translate(-8px, -12px) scale(1.03);
+      }
+
+      80% {
+        transform: translate(10px, 6px) scale(1.01);
+      }
+
+      100% {
+        transform: translate(0, 0) scale(1);
+      }
+    }
+
+    .move-text {
+      margin-top: 10px;
+      opacity: 0;
+      transition: opacity 0.5s;
+      color: #999;
+      font-size: 14px;
+    }
+
+    .move-text.show {
+      opacity: 1;
     }
   </style>
 </head>
+
 <body>
 
   <div class="loader" id="loader">
     <div class="spinner"></div>
-    <p>Video wordt geladen... <span id="percent">0</span>%</p>
+
+    <p>
+      Video wordt geladen...
+      <span id="percent">0</span>%
+    </p>
+
+    <div class="move-text" id="moveText">
+      Beweeg je muis om verder te gaan...
+    </div>
   </div>
 
   <div class="scare" id="scare">
@@ -89,93 +149,209 @@
   </div>
 
   <script>
-    // fake loading bar
     let p = 0;
-    const percent = document.getElementById('percent');
-  const interval = setInterval(() => {
-  p += Math.random() * 25;
-  if (p >= 99) {
-    p = 99;
-    percent.textContent = Math.floor(p);
-    clearInterval(interval);
-    setTimeout(triggerScare, 300);
-  } else {
-    percent.textContent = Math.floor(p);
-  }
-}, 50);
+
+    const percent = document.getElementById("percent");
+    const moveText = document.getElementById("moveText");
+
+    let waitingForMovement = false;
+    let lastX = null;
+    let lastY = null;
+    let scareTriggered = false;
+
+    // fake loading
+    const interval = setInterval(() => {
+
+      p += Math.random() * 25;
+
+      if (p >= 99) {
+        p = 99;
+
+        percent.textContent = Math.floor(p);
+
+        clearInterval(interval);
+
+        waitingForMovement = true;
+
+        moveText.classList.add("show");
+
+        // luister naar muisbeweging
+        document.addEventListener("mousemove", detectMovement);
+      }
+      else {
+        percent.textContent = Math.floor(p);
+      }
+
+    }, 50);
+
+    function detectMovement(e) {
+
+      if (!waitingForMovement || scareTriggered) return;
+
+      // eerste positie opslaan
+      if (lastX === null) {
+        lastX = e.clientX;
+        lastY = e.clientY;
+        return;
+      }
+
+      const dx = Math.abs(e.clientX - lastX);
+      const dy = Math.abs(e.clientY - lastY);
+
+      // alleen triggeren bij duidelijke beweging
+      if (dx > 25 || dy > 25) {
+
+        scareTriggered = true;
+
+        document.removeEventListener("mousemove", detectMovement);
+
+        // kleine vertraging voor extra effect
+        setTimeout(() => {
+          triggerScare();
+        }, 400);
+      }
+
+      lastX = e.clientX;
+      lastY = e.clientY;
+    }
 
     function triggerScare() {
-      document.getElementById('loader').style.display = 'none';
-      document.getElementById('scare').classList.add('active');
+
+      document.getElementById("loader").style.display = "none";
+
+      document.getElementById("scare").classList.add("active");
+
       playScream();
 
-      // probeer fullscreen
+      // fullscreen proberen
       if (document.documentElement.requestFullscreen) {
         document.documentElement.requestFullscreen().catch(() => {});
       }
     }
 
-    // scream geluid via Web Audio API (geen audiobestand nodig)
+    // scream geluid
     function playScream() {
+
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
+
       const duration = 4;
 
-      // white noise voor static/ruis
+      // noise
       const bufferSize = ctx.sampleRate * duration;
-      const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+
+      const noiseBuffer = ctx.createBuffer(
+        1,
+        bufferSize,
+        ctx.sampleRate
+      );
+
       const output = noiseBuffer.getChannelData(0);
+
       for (let i = 0; i < bufferSize; i++) {
         output[i] = (Math.random() * 2 - 1) * 0.8;
       }
+
       const noise = ctx.createBufferSource();
+
       noise.buffer = noiseBuffer;
 
-      // distortion filter
+      // filter
       const filter = ctx.createBiquadFilter();
-      filter.type = 'bandpass';
+
+      filter.type = "bandpass";
+
       filter.frequency.value = 1000;
+
       filter.Q.value = 0.5;
 
-      // gillende oscillator
+      // oscillator 1
       const osc1 = ctx.createOscillator();
-      osc1.type = 'sawtooth';
-      osc1.frequency.setValueAtTime(800, ctx.currentTime);
-      osc1.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + duration);
 
+      osc1.type = "sawtooth";
+
+      osc1.frequency.setValueAtTime(
+        800,
+        ctx.currentTime
+      );
+
+      osc1.frequency.exponentialRampToValueAtTime(
+        200,
+        ctx.currentTime + duration
+      );
+
+      // oscillator 2
       const osc2 = ctx.createOscillator();
-      osc2.type = 'square';
-      osc2.frequency.setValueAtTime(1200, ctx.currentTime);
-      osc2.frequency.exponentialRampToValueAtTime(150, ctx.currentTime + duration);
 
-      // wobble effect
+      osc2.type = "square";
+
+      osc2.frequency.setValueAtTime(
+        1200,
+        ctx.currentTime
+      );
+
+      osc2.frequency.exponentialRampToValueAtTime(
+        150,
+        ctx.currentTime + duration
+      );
+
+      // wobble
       const lfo = ctx.createOscillator();
+
       lfo.frequency.value = 15;
+
       const lfoGain = ctx.createGain();
+
       lfoGain.gain.value = 300;
+
       lfo.connect(lfoGain);
+
       lfoGain.connect(osc1.frequency);
+
       lfoGain.connect(osc2.frequency);
 
+      // volume
       const gain = ctx.createGain();
-      gain.gain.setValueAtTime(1, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
 
+      gain.gain.setValueAtTime(
+        1,
+        ctx.currentTime
+      );
+
+      gain.gain.exponentialRampToValueAtTime(
+        0.01,
+        ctx.currentTime + duration
+      );
+
+      // connecties
       noise.connect(filter);
+
       filter.connect(gain);
+
       osc1.connect(gain);
+
       osc2.connect(gain);
+
       gain.connect(ctx.destination);
 
+      // start
       noise.start();
+
       osc1.start();
+
       osc2.start();
+
       lfo.start();
 
+      // stop
       noise.stop(ctx.currentTime + duration);
+
       osc1.stop(ctx.currentTime + duration);
+
       osc2.stop(ctx.currentTime + duration);
+
       lfo.stop(ctx.currentTime + duration);
     }
   </script>
+
 </body>
 </html>
